@@ -20,5 +20,58 @@
       "odc*.officeapps.live.com:443",
       "ols.officeapps.live.com:443"
     ],
+  },
+  customizers: {
+    pre: [
+      {
+        type: "File",
+        name: "FILE_InstallLanguagePacks",
+        destination: "C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1",
+        sourceUri: "https://raw.githubusercontent.com/Azure/RDS-Templates/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/InstallLanguagePacks.ps1"
+      },
+      {
+        type: "PowerShell",
+        name: "CONF_InstallLanguagePacks",
+        inline: [
+          "$ErrorActionPreference = \"Stop\"",
+          "Write-Output \"Installing Dutch language pack\"",
+          "& \"C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1\" -LanguageList \"Dutch (Netherlands)\"",
+          "Write-Output \"Successfully installed Dutch language pack\"",
+        ],
+        system: true,
+        elevated: true
+      },
+      {
+        type: "WindowsUpdate",
+        name: "LanguagePackPostInstallWindowsUpdate"
+      },
+      {
+        type: "WindowsRestart",
+        name: "LanguagePackPostInstallWindowsRestart"
+      },
+      {
+        type: "File",
+        name: "FILE_SetDefaultLanguage",
+        destination: "C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1",
+        sourceUri: "https://raw.githubusercontent.com/Azure/RDS-Templates/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/SetDefaultLang.ps1"
+      },
+      {
+        type: "PowerShell",
+        name: "CONF_SetDefaultLanguage",
+        inline: [
+          "C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1 -Language \"Dutch (Netherlands)\""
+        ],
+        system: true,
+        elevated: true
+      },
+      {
+        type: "WindowsUpdate",
+        name: "SetDefaultLanguagePostConfigWindowsUpdate"
+      },
+      {
+        type: "WindowsRestart",
+        name: "SetDefaultLanguagePostConfigWindowsRestart"
+      },
+    ],
   }
 }
