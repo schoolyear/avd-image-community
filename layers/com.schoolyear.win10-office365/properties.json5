@@ -1,10 +1,10 @@
 {
-  version: 'v2',
-  name: 'com.schoolyear.win10-office365',
+  version: "v2",
+  name: "com.schoolyear.win10-office365",
   description: "Configure the base image to win10-office365 and whitelists the required URLs. No default language support.",
   author: {
-    name: 'Schoolyear',
-    email: 'avd@schoolyear.com'
+    name: "Schoolyear",
+    email: "avd@schoolyear.com"
   },
   platform_version: "2",
   base_image: {
