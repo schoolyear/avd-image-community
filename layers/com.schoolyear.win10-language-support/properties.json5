@@ -8,6 +8,53 @@
     email: "avd@schoolyear.com"
   },
   platform_version: "2",
+  build_parameters: {
+    windowsLanguage: {
+      description: "Set the language of windows",
+      enum: [
+        "Arabic (Saudi Arabia)",
+        "Bulgarian (Bulgaria)",
+        "Chinese (Simplified, China)",
+        "Chinese (Traditional, Taiwan)",
+        "Croatian (Croatia)",
+        "Czech (Czech Republic)",
+        "Danish (Denmark)",
+        "Dutch (Netherlands)",
+        "English (United Kingdom)",
+        "Estonian (Estonia)",
+        "Finnish (Finland)",
+        "French (Canada)",
+        "French (France)",
+        "German (Germany)",
+        "Greek (Greece)",
+        "Hebrew (Israel)",
+        "Hungarian (Hungary)",
+        "Italian (Italy)",
+        "Japanese (Japan)",
+        "Korean (Korea)",
+        "Latvian (Latvia)",
+        "Lithuanian (Lithuania)",
+        "Norwegian, Bokmål (Norway)",
+        "Polish (Poland)",
+        "Portuguese (Brazil)",
+        "Portuguese (Portugal)",
+        "Romanian (Romania)",
+        "Russian (Russia)",
+        "Serbian (Latin, Serbia)",
+        "Slovak (Slovakia)",
+        "Slovenian (Slovenia)",
+        "Spanish (Mexico)",
+        "Spanish (Spain)",
+        "Swedish (Sweden)",
+        "Thai (Thailand)",
+        "Turkish (Turkey)",
+        "Ukrainian (Ukraine)",
+        "English (Australia)",
+        "English (United States)"
+      ],
+      default: "English (United States)"
+    }
+  },
   customizers: {
     pre: [
       {
@@ -21,8 +68,13 @@
         name: "CONF_InstallLanguagePacks",
         inline: [
           "$ErrorActionPreference = \"Stop\"",
-          "Write-Output \"Installing Dutch language pack\"",
-          "& \"C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1\" -LanguageList \"Dutch (Netherlands)\"",
+          "Write-Host \"checking for build_parameters.json existence\"",
+          "if (!(Test-Path \"C:\\image_bundle\\build_parameters.json\")) { Write-Error \"build_parameters.json not found in path\" }",
+          "Write-Host \"Extracting selected language from build_parameters.json\"",
+          "$windowsLanguage = (Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win10-language-support'.windowsLanguage.value",
+          "if ([string]::IsNullOrEmpty($windowsLanguage)) { Write-Error \"windowsLanguage cannot be empty\" }",
+          "Write-Output \"Installing language pack: $windowsLanguage\"",
+          "& \"C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1\" -LanguageList $windowsLanguage",
           "Write-Output \"Successfully installed Dutch language pack\"",
         ],
         system: true,
@@ -46,7 +98,13 @@
         type: "PowerShell",
         name: "CONF_SetDefaultLanguage",
         inline: [
-          "C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1 -Language \"Dutch (Netherlands)\""
+          "Write-Host \"checking for build_parameters.json existence\"",
+          "if (!(Test-Path \"C:\\image_bundle\\build_parameters.json\")) { Write-Error \"build_parameters.json not found in path\" }",
+          "Write-Host \"Extracting selected language from build_parameters.json\"",
+          "$windowsLanguage = (Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win10-language-support'.windowsLanguage.value",
+          "if ([string]::IsNullOrEmpty($windowsLanguage)) { Write-Error \"windowsLanguage cannot be empty\" }",
+          "Write-Output \"Setting default language: $windowsLanguage\"",
+          "C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1 -Language $windowsLanguage"
         ],
         system: true,
         elevated: true
