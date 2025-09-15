@@ -75,7 +75,7 @@
           "if ([string]::IsNullOrEmpty($windowsLanguage)) { Write-Error \"windowsLanguage cannot be empty\" }",
           "Write-Output \"Installing language pack: $windowsLanguage\"",
           "& \"C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1\" -LanguageList $windowsLanguage",
-          "Write-Output \"Successfully installed Dutch language pack\"",
+          "Write-Output \"Successfully installed $windowsLanguage language pack\"",
         ],
         system: true,
         elevated: true
@@ -104,7 +104,7 @@
           "$windowsLanguage = (Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win10-language-support'.windowsLanguage.value",
           "if ([string]::IsNullOrEmpty($windowsLanguage)) { Write-Error \"windowsLanguage cannot be empty\" }",
           "Write-Output \"Setting default language: $windowsLanguage\"",
-          "C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1 -Language $windowsLanguage"
+          "& \"C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1\" -Language $windowsLanguage"
         ],
         system: true,
         elevated: true
@@ -116,7 +116,7 @@
       {
         type: "WindowsRestart",
         name: "SetDefaultLanguagePostConfigWindowsRestart"
-      },
+      }
     ],
   }
 }
