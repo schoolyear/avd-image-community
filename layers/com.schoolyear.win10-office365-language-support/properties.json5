@@ -1,0 +1,123 @@
+
+{
+  version: "v2",
+  name: "com.schoolyear.win10-office365-language-support",
+  description: "Configure the base image to win10-office365 and whitelists the required URLs. With language support.",
+  author: {
+    name: "Schoolyear",
+    email: "avd@schoolyear.com"
+  },
+  platform_version: "2",
+  base_image: {
+    type: "PlatformImage",
+    publisher: "microsoftwindowsdesktop",
+    version: "latest",
+    sku: "win10-22h2-avd-m365-g2",
+    offer: "office-365"
+  },
+  network: {
+    http_proxy_whitelist: [
+      "officeclient.microsoft.com:443",
+      "odc*.officeapps.live.com:443",
+      "ols.officeapps.live.com:443"
+    ],
+  },
+  windowsLanguage: {
+    description: "Set the language of windows",
+    enum: [
+      "Arabic (Saudi Arabia)",
+      "Bulgarian (Bulgaria)",
+      "Chinese (Simplified, China)",
+      "Chinese (Traditional, Taiwan)",
+      "Croatian (Croatia)",
+      "Czech (Czech Republic)",
+      "Danish (Denmark)",
+      "Dutch (Netherlands)",
+      "English (United Kingdom)",
+      "Estonian (Estonia)",
+      "Finnish (Finland)",
+      "French (Canada)",
+      "French (France)",
+      "German (Germany)",
+      "Greek (Greece)",
+      "Hebrew (Israel)",
+      "Hungarian (Hungary)",
+      "Italian (Italy)",
+      "Japanese (Japan)",
+      "Korean (Korea)",
+      "Latvian (Latvia)",
+      "Lithuanian (Lithuania)",
+      "Norwegian, Bokmål (Norway)",
+      "Polish (Poland)",
+      "Portuguese (Brazil)",
+      "Portuguese (Portugal)",
+      "Romanian (Romania)",
+      "Russian (Russia)",
+      "Serbian (Latin, Serbia)",
+      "Slovak (Slovakia)",
+      "Slovenian (Slovenia)",
+      "Spanish (Mexico)",
+      "Spanish (Spain)",
+      "Swedish (Sweden)",
+      "Thai (Thailand)",
+      "Turkish (Turkey)",
+      "Ukrainian (Ukraine)",
+      "English (Australia)",
+      "English (United States)"
+    ],
+    default: "English (United States)"
+  },
+  customizers: {
+    pre: [
+      {
+        type: "File",
+        name: "FILE_InstallLanguagePacks",
+        destination: "C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1",
+        sourceUri: "https://raw.githubusercontent.com/Azure/RDS-Templates/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/InstallLanguagePacks.ps1"
+      },
+      {
+        type: "PowerShell",
+        name: "CONF_InstallLanguagePacks",
+        inline: [
+          "$ErrorActionPreference = \"Stop\"",
+          "Write-Output \"Installing Dutch language pack\"",
+          "& \"C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1\" -LanguageList \"Dutch (Netherlands)\"",
+          "Write-Output \"Successfully installed Dutch language pack\"",
+        ],
+        system: true,
+        elevated: true
+      },
+      {
+        type: "WindowsUpdate",
+        name: "LanguagePackPostInstallWindowsUpdate"
+      },
+      {
+        type: "WindowsRestart",
+        name: "LanguagePackPostInstallWindowsRestart"
+      },
+      {
+        type: "File",
+        name: "FILE_SetDefaultLanguage",
+        destination: "C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1",
+        sourceUri: "https://raw.githubusercontent.com/Azure/RDS-Templates/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/SetDefaultLang.ps1"
+      },
+      {
+        type: "PowerShell",
+        name: "CONF_SetDefaultLanguage",
+        inline: [
+          "C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1 -Language \"Dutch (Netherlands)\""
+        ],
+        system: true,
+        elevated: true
+      },
+      {
+        type: "WindowsUpdate",
+        name: "SetDefaultLanguagePostConfigWindowsUpdate"
+      },
+      {
+        type: "WindowsRestart",
+        name: "SetDefaultLanguagePostConfigWindowsRestart"
+      },
+    ],
+  }
+}
