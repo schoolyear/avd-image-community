@@ -1,6 +1,6 @@
 
 {
-  version: "v2",
+  version: "v2.1",
   name: "com.schoolyear.win10-language-support",
   description: "Add language support for your base image. Installs the selected language pack and sets the default language.",
   author: {
