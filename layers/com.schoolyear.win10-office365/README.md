@@ -3,12 +3,12 @@
 This properties-only layer configures a base layer for the image building process and the domains to whitelist in the proxy.
 By using the Azure-provided default image, no Office installation needs to be performed during the image building process.
 
-This layer only allows a small portion of the FQDNs used by Office, such that the online features such a file sync are not available.
+This layer only allows a small portion of the FQDNs used by Office, such that the online features such as file sync are not available.
 Office activation is allowed to be performed over the network.
 
 ## 16 jan 2026 update
 
-On the 16th of January 2026, Microsoft added an FQDN required for Office activation.
+On the 16th of January 2026, Microsoft added an extra FQDN required for Office activation.
 Without access to this domain, Office will show an activation error and block exam participants from using Office.
 
 This FQDN is now added to the `properties.json5` in this layer, and we advise all customers using this layer to download this update for future image builds.
