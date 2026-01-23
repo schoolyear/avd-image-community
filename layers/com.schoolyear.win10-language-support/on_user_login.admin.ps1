@@ -25,4 +25,4 @@ Param (
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
-try { Set-Culture nl-NL } catch { Write-Host "***Set-Culture failed (non-fatal): $($_.Exception.Message)" }
+# try { Set-Culture nl-NL } catch { Write-Host "***Set-Culture failed (non-fatal): $($_.Exception.Message)" }

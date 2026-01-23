@@ -1,0 +1,29 @@
+# This script is executed on each sessionhost during deployment
+# Note that any time spent in this script adds to the deployment time of each VM (and thus the deployment time of exams)
+
+$ErrorActionPreference = "Stop"
+Set-StrictMode -Version Latest
+
+# --- Settings ---
+$GeoId   = 176      # Netherlands
+$Culture = "nl-NL"  # formats/locale
+# Keyboard: Dutch (Netherlands) = 0413, US keyboard layout = 00020409 (common “Dutch language, US layout” combo)
+$InputLanguageId = "0413:00020409"
+
+
+try { Set-WinSystemLocale $Culture } catch { Write-Host "***Set-WinSystemLocale failed (non-fatal): $($_.Exception.Message)" }
+try { Set-WinHomeLocation -GeoId $GeoId } catch { Write-Host "***Set-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }
+try { Set-SystemPreferredUILanguage -Language $Culture } catch { Write-Host "***Set-SystemPreferredUILanguage failed (non-fatal): $($_.Exception.Message)" }
+
+# Preferred: cmdlet; Fallback: intl.xml via control.exe
+try {
+  if (-not (Test-Command "Copy-UserInternationalSettingsToSystem")) {
+    throw "Copy-UserInternationalSettingsToSystem not available"
+  }
+
+  Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
+  Write-Host "***Copy-UserInternationalSettingsToSystem succeeded."
+}
+catch {
+  Write-Host "Copy settings failed"
+}
