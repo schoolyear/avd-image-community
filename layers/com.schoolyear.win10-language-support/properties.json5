@@ -1,0 +1,122 @@
+
+{
+  version: "v2.1",
+  name: "com.schoolyear.win10-language-support",
+  description: "Add language support for your base image. Installs the selected language pack and sets the default language.",
+  author: {
+    name: "Schoolyear",
+    email: "avd@schoolyear.com"
+  },
+  platform_version: "2",
+  build_parameters: {
+    windowsLanguage: {
+      description: "Set the language of windows",
+      enum: [
+        "Arabic (Saudi Arabia)",
+        "Bulgarian (Bulgaria)",
+        "Chinese (Simplified, China)",
+        "Chinese (Traditional, Taiwan)",
+        "Croatian (Croatia)",
+        "Czech (Czech Republic)",
+        "Danish (Denmark)",
+        "Dutch (Netherlands)",
+        "English (United Kingdom)",
+        "Estonian (Estonia)",
+        "Finnish (Finland)",
+        "French (Canada)",
+        "French (France)",
+        "German (Germany)",
+        "Greek (Greece)",
+        "Hebrew (Israel)",
+        "Hungarian (Hungary)",
+        "Italian (Italy)",
+        "Japanese (Japan)",
+        "Korean (Korea)",
+        "Latvian (Latvia)",
+        "Lithuanian (Lithuania)",
+        "Norwegian, Bokmål (Norway)",
+        "Polish (Poland)",
+        "Portuguese (Brazil)",
+        "Portuguese (Portugal)",
+        "Romanian (Romania)",
+        "Russian (Russia)",
+        "Serbian (Latin, Serbia)",
+        "Slovak (Slovakia)",
+        "Slovenian (Slovenia)",
+        "Spanish (Mexico)",
+        "Spanish (Spain)",
+        "Swedish (Sweden)",
+        "Thai (Thailand)",
+        "Turkish (Turkey)",
+        "Ukrainian (Ukraine)",
+        "English (Australia)",
+        "English (United States)"
+      ],
+      default: "English (United States)"
+    }
+  },
+  customizers: {
+    pre: [
+      {
+        type: "File",
+        name: "FILE_InstallLanguagePacks",
+        destination: "C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1",
+        sourceUri: "https://raw.githubusercontent.com/Azure/RDS-Templates/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/InstallLanguagePacks.ps1"
+      },
+      {
+        type: "PowerShell",
+        name: "CONF_InstallLanguagePacks",
+        inline: [
+          "$ErrorActionPreference = \"Stop\"",
+          "Write-Host \"checking for build_parameters.json existence\"",
+          "if (!(Test-Path \"C:\\image_bundle\\build_parameters.json\")) { Write-Error \"build_parameters.json not found in path\" }",
+          "Write-Host \"Extracting selected language from build_parameters.json\"",
+          "$windowsLanguage = (Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win10-language-support'.windowsLanguage.value",
+          "if ([string]::IsNullOrEmpty($windowsLanguage)) { Write-Error \"windowsLanguage cannot be empty\" }",
+          "Write-Output \"Installing language pack: $windowsLanguage\"",
+          "& \"C:\\AIBTemp\\Production\\Configurations\\installLanguagePacks.ps1\" -LanguageList $windowsLanguage",
+          "Write-Output \"Successfully installed $windowsLanguage language pack\"",
+        ],
+        system: true,
+        elevated: true
+      },
+      {
+        type: "WindowsUpdate",
+        name: "LanguagePackPostInstallWindowsUpdate"
+      },
+      {
+        type: "WindowsRestart",
+        name: "LanguagePackPostInstallWindowsRestart"
+      },
+      {
+        type: "File",
+        name: "FILE_SetDefaultLanguage",
+        destination: "C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1",
+        sourceUri: "https://raw.githubusercontent.com/Azure/RDS-Templates/master/CustomImageTemplateScripts/CustomImageTemplateScripts_2024-03-27/SetDefaultLang.ps1"
+      },
+      {
+        type: "PowerShell",
+        name: "CONF_SetDefaultLanguage",
+        inline: [
+          "Write-Host \"checking for build_parameters.json existence\"",
+          "if (!(Test-Path \"C:\\image_bundle\\build_parameters.json\")) { Write-Error \"build_parameters.json not found in path\" }",
+          "Write-Host \"Extracting selected language from build_parameters.json\"",
+          "$windowsLanguage = (Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win10-language-support'.windowsLanguage.value",
+          "if ([string]::IsNullOrEmpty($windowsLanguage)) { Write-Error \"windowsLanguage cannot be empty\" }",
+          "Write-Output \"Setting default language: $windowsLanguage\"",
+          "& \"C:\\AIBTemp\\Production\\Configurations\\setDefaultLanguage.ps1\" -Language $windowsLanguage"
+        ],
+        system: true,
+        elevated: true
+      },
+      {
+        type: "WindowsUpdate",
+        name: "SetDefaultLanguagePostConfigWindowsUpdate"
+      },
+      {
+        type: "WindowsRestart",
+        name: "SetDefaultLanguagePostConfigWindowsRestart"
+      }
+    ],
+  }
+}
