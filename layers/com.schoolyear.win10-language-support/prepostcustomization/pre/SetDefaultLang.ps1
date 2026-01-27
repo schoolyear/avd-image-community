@@ -195,7 +195,7 @@ try {
       break
     }
     catch {
-      Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Set-SystemPreferredUILanguage failed on attempt $i: [$($_.Exception.Message)] ***"
+      Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Set-SystemPreferredUILanguage failed on attempt $i : [$($_.Exception.Message)] ***"
       if ($i -lt $maxRetries) {
         Start-Sleep -Seconds $retryDelaySeconds
       }
