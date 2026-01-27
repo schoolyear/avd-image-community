@@ -8,30 +8,29 @@
 
 
 [CmdletBinding()]
-  Param (
-        [Parameter(Mandatory)]
-        [ValidateSet("Arabic (Saudi Arabia)","Bulgarian (Bulgaria)","Chinese (Simplified, China)","Chinese (Traditional, Taiwan)","Croatian (Croatia)","Czech (Czech Republic)","Danish (Denmark)","Dutch (Netherlands)", "English (United Kingdom)", "Estonian (Estonia)", "Finnish (Finland)", "French (Canada)", "French (France)", "German (Germany)", "Greek (Greece)", "Hebrew (Israel)", "Hungarian (Hungary)", "Italian (Italy)", "Japanese (Japan)", "Korean (Korea)", "Latvian (Latvia)", "Lithuanian (Lithuania)", "Norwegian, Bokmål (Norway)", "Polish (Poland)", "Portuguese (Brazil)", "Portuguese (Portugal)", "Romanian (Romania)", "Russian (Russia)", "Serbian (Latin, Serbia)", "Slovak (Slovakia)", "Slovenian (Slovenia)", "Spanish (Mexico)", "Spanish (Spain)", "Swedish (Sweden)", "Thai (Thailand)", "Turkish (Turkey)", "Ukrainian (Ukraine)", "English (Australia)", "English (United States)")]
-        [string]$Language
+Param (
+  [Parameter(Mandatory)]
+  [ValidateSet("Arabic (Saudi Arabia)", "Bulgarian (Bulgaria)", "Chinese (Simplified, China)", "Chinese (Traditional, Taiwan)", "Croatian (Croatia)", "Czech (Czech Republic)", "Danish (Denmark)", "Dutch (Netherlands)", "English (United Kingdom)", "Estonian (Estonia)", "Finnish (Finland)", "French (Canada)", "French (France)", "German (Germany)", "Greek (Greece)", "Hebrew (Israel)", "Hungarian (Hungary)", "Italian (Italy)", "Japanese (Japan)", "Korean (Korea)", "Latvian (Latvia)", "Lithuanian (Lithuania)", "Norwegian, Bokmål (Norway)", "Polish (Poland)", "Portuguese (Brazil)", "Portuguese (Portugal)", "Romanian (Romania)", "Russian (Russia)", "Serbian (Latin, Serbia)", "Slovak (Slovakia)", "Slovenian (Slovenia)", "Spanish (Mexico)", "Spanish (Spain)", "Swedish (Sweden)", "Thai (Thailand)", "Turkish (Turkey)", "Ukrainian (Ukraine)", "English (Australia)", "English (United States)")]
+  [string]$Language
 )
 
-function Get-RegionInfo($Name='*')
-{
+function Get-RegionInfo($Name = '*') {
   try {
     $cultures = [System.Globalization.CultureInfo]::GetCultures('InstalledWin32Cultures')
 
-    foreach($culture in $cultures)
-    {        
-      if($culture.DisplayName -eq $Name) {
+    foreach ($culture in $cultures) {        
+      if ($culture.DisplayName -eq $Name) {
         $languageTag = $culture.Name
         break;
       }
     }
 
-    if($null -eq $languageTag) {
-        return
-    } else {
-        $region = [System.Globalization.RegionInfo]$culture.Name
-        return @($languageTag, $region.GeoId)
+    if ($null -eq $languageTag) {
+      return
+    }
+    else {
+      $region = [System.Globalization.RegionInfo]$culture.Name
+      return @($languageTag, $region.GeoId)
     }
   }
   catch {
@@ -41,28 +40,24 @@ function Get-RegionInfo($Name='*')
   }
 }
 
-function UpdateUserLanguageList($languageTag)
-{
+function UpdateUserLanguageList($languageTag) {
   try {
     # Enable language Keyboard for Windows.
     $userLanguageList = New-WinUserLanguageList -Language $languageTag
     $installedUserLanguagesList = Get-WinUserLanguageList
 
-    foreach($language in $installedUserLanguagesList)
-    {
-        $userLanguageList.Add($language.LanguageTag)
+    foreach ($language in $installedUserLanguagesList) {
+      $userLanguageList.Add($language.LanguageTag)
     }
 
     Set-WinUserLanguageList -LanguageList $userLanguageList -f
   }
-  catch 
-  {
+  catch {
     Write-Host "***Starting AVD AIB CUSTOMIZER PHASE: Set default Language - UpdateUserLanguageList: Error occurred: [$($_.Exception.Message)]"
   }
 }
 
-function UpdateRegionSettings($GeoID) 
-{
+function UpdateRegionSettings($GeoID) {
   try {
     try {
       # try deleting reg key for deviceRegion for DMA compliance.
@@ -70,8 +65,7 @@ function UpdateRegionSettings($GeoID)
       Remove-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Control Panel\DeviceRegion" -Name "DeviceRegion" -Force -ErrorAction Continue
       Write-Host "***Starting AVD AIB CUSTOMIZER PHASE: Set default Language - Remove DeviceRegion registry key succeeded."
     }
-    catch 
-    {
+    catch {
       Write-Host "***Starting AVD AIB CUSTOMIZER PHASE: Set default Language - Try deleting reg key failed with error: [$($_.Exception.Message)]"
     }
 
@@ -81,8 +75,8 @@ function UpdateRegionSettings($GeoID)
     Write-Host "***Starting AVD AIB CUSTOMIZER PHASE: Set default Language - Region update completed."
   }
   catch {
-      Write-Host "***Starting AVD AIB CUSTOMIZER PHASE: Set default Language - UpdateRegionSettings: Error occurred: [$($_.Exception.Message)]"
-      Exit 1
+    Write-Host "***Starting AVD AIB CUSTOMIZER PHASE: Set default Language - UpdateRegionSettings: Error occurred: [$($_.Exception.Message)]"
+    Exit 1
   }
 }
 
@@ -142,9 +136,10 @@ try {
 
   $languageDetails = Get-RegionInfo -Name $Language
 
-  if($null -eq $languageDetails) {
+  if ($null -eq $languageDetails) {
     $LanguageTag = $LanguagesDictionary.$Language 
-  } else {
+  }
+  else {
     $languageTag = $languageDetails[0]
     $GeoID = $languageDetails[1]
   }
@@ -154,9 +149,9 @@ try {
   try {
     #install language pack in case the provided language is not installed
     $installedLanguages = Get-InstalledLanguage
-    foreach($languagePack in $installedLanguages) {
+    foreach ($languagePack in $installedLanguages) {
       $languageID = $languagePack.LanguageId
-      if($languageID -eq $LanguageTag) {
+      if ($languageID -eq $LanguageTag) {
         $foundLanguage = $true
         break
       }
@@ -167,27 +162,51 @@ try {
     Write-Host $PSItem.Exception
   }
 
-  if(-Not $foundLanguage) {
+  if (-Not $foundLanguage) {
     # retry in case we hit transient errors
-    for($i=1; $i -le 5; $i++) {
-        try {
-            Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs -  Attempt: $i ***"   
-            Install-Language -Language $LanguageTag -ErrorAction Stop
-            Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs -  Installed language $LanguageCode ***"   
-            break
-        }
-        catch {
-            Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs - Exception occurred***"
-            Write-Host $PSItem.Exception
-            continue
-        }
+    for ($i = 1; $i -le 5; $i++) {
+      try {
+        Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs -  Attempt: $i ***"   
+        Install-Language -Language $LanguageTag -ErrorAction Stop
+        Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs -  Installed language $LanguageCode ***"   
+        break
+      }
+      catch {
+        Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs - Exception occurred***"
+        Write-Host $PSItem.Exception
+        continue
+      }
     }
   }
   else {
-     Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Language pack for $LanguageTag is installed already***"
+    Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Language pack for $LanguageTag is installed already***"
   }
   
-  Set-systempreferreduilanguage -Language $LanguageTag
+  $maxRetries = 5
+  $retryDelaySeconds = 15
+  $setUiLanguageSucceeded = $false
+
+  for ($i = 1; $i -le $maxRetries; $i++) {
+    try {
+      Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Set-SystemPreferredUILanguage attempt $i ***"
+      Set-SystemPreferredUILanguage -Language $LanguageTag -ErrorAction Stop
+      Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Set-SystemPreferredUILanguage succeeded ***"
+      $setUiLanguageSucceeded = $true
+      break
+    }
+    catch {
+      Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Set-SystemPreferredUILanguage failed on attempt $i: [$($_.Exception.Message)] ***"
+      if ($i -lt $maxRetries) {
+        Start-Sleep -Seconds $retryDelaySeconds
+      }
+    }
+  }
+
+  if (-not $setUiLanguageSucceeded) {
+    Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Set-SystemPreferredUILanguage failed after $maxRetries attempts ***"
+    exit 1
+  }
+
   Set-WinSystemLocale -SystemLocale $LanguageTag
   Set-Culture -CultureInfo $LanguageTag
   
@@ -200,12 +219,12 @@ try {
   UpdateRegionSettings($GeoID)
 } 
 catch {
-    Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Exception occurred***"
-    Write-Host $PSItem.Exception
+  Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Exception occurred***"
+  Write-Host $PSItem.Exception
 }
 
 if ((Test-Path -Path $templateFilePathFolder -ErrorAction SilentlyContinue)) {
-    Remove-Item -Path $templateFilePathFolder -Force -Recurse -ErrorAction Continue
+  Remove-Item -Path $templateFilePathFolder -Force -Recurse -ErrorAction Continue
 }
 
 # Enable LanguageComponentsInstaller after language packs are installed
