@@ -1,6 +1,6 @@
 Param (
   [Parameter(Mandatory = $true)]
-  [string]$LanguageList
+  [System.String[]]$LanguageList
 )
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
@@ -98,6 +98,7 @@ foreach ($op in $operations) {
 
   if (-not $succeeded) {
     Write-Host "*** $($op.Name) failed after $maxRetries attempts ***"
+    Get-InstalledLanguage
     exit 1
   }
 }
