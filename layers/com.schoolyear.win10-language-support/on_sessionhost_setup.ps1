@@ -10,6 +10,12 @@ $Culture = "nl-NL"  # formats/locale
 # Keyboard: Dutch (Netherlands) = 0413, US keyboard layout = 00020409 (common “Dutch language, US layout” combo)
 $InputLanguageId = "0413:00020409"
 
+#redundant
+
+try { get-WinSystemLocale } catch { Write-Host "***Get-WinSystemLocale failed (non-fatal): $($_.Exception.Message)" }
+try { get-WinHomeLocation } catch { Write-Host "***Get-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }
+try { get-SystemPreferredUILanguage } catch { Write-Host "***Get-SystemPreferredUILanguage failed (non-fatal): $($_.Exception.Message)" }
+
 
 try { Set-WinSystemLocale $Culture } catch { Write-Host "***Set-WinSystemLocale failed (non-fatal): $($_.Exception.Message)" }
 try { Set-WinHomeLocation -GeoId $GeoId } catch { Write-Host "***Set-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }

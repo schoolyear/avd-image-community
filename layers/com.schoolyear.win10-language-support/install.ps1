@@ -10,6 +10,6 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 $ProgressPreference = 'SilentlyContinue'
 
-Write-Host "===   ==="
+Write-Host "===  run setLanguage.ps1 ==="
 & .\install_scripts\setLanguage.ps1 -rVersion $rVersion
-Write-Host "=== Done with ==="                         
+Write-Host "=== Done with setLanguage.ps1 ==="                         
