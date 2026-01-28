@@ -25,4 +25,31 @@ Param (
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
-# try { Set-Culture nl-NL } catch { Write-Host "***Set-Culture failed (non-fatal): $($_.Exception.Message)" }
+try {
+    $desktop = Join-Path -Path $homedir -ChildPath "Desktop"
+    if (-not (Test-Path -LiteralPath $desktop)) {
+        New-Item -ItemType Directory -Path $desktop -Force | Out-Null
+    }
+
+    $stamp   = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+    $logPath = Join-Path -Path $desktop -ChildPath ("culture-log_{0}.txt" -f $stamp)
+
+    $culture = Get-Culture
+
+    @(
+        "Timestamp : $(Get-Date -Format o)"
+        "Username  : $username"
+        "UID (SID) : $uid"
+        "HomeDir   : $homedir"
+        "Culture   : $($culture.Name)"
+        "Display   : $($culture.DisplayName)"
+        "IetfTag   : $($culture.IetfLanguageTag)"
+        "English   : $($culture.EnglishName)"
+    ) | Set-Content -LiteralPath $logPath -Encoding UTF8
+
+} catch {
+    # Keep this lightweight; do not block the student for long.
+    Write-Host "*** Failed to write culture log to Desktop: $($_.Exception.Message)"
+}
+
+Set-Culture nl-NL

@@ -24,7 +24,7 @@ Set-WinUserLanguageList $ll -Force
 try { get-WinSystemLocale } catch { Write-Host "***Get-WinSystemLocale failed (non-fatal): $($_.Exception.Message)" }
 try { get-WinHomeLocation } catch { Write-Host "***Get-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }
 try { get-SystemPreferredUILanguage } catch { Write-Host "***Get-SystemPreferredUILanguage failed (non-fatal): $($_.Exception.Message)" }
-set-Culture nl-NL
+get-Culture
 
 try { Set-WinSystemLocale $Culture } catch { Write-Host "***Set-WinSystemLocale failed (non-fatal): $($_.Exception.Message)" }
 try { Set-WinHomeLocation -GeoId $GeoId } catch { Write-Host "***Set-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }
@@ -34,13 +34,3 @@ try { get-WinSystemLocale } catch { Write-Host "***Get-WinSystemLocale failed (n
 try { get-WinHomeLocation } catch { Write-Host "***Get-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }
 try { get-SystemPreferredUILanguage } catch { Write-Host "***Get-SystemPreferredUILanguage failed (non-fatal): $($_.Exception.Message)" }
 set-Culture nl-NL
-
-try {
-  Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
-  Write-Host "***Copy-UserInternationalSettingsToSystem succeeded."
-}
-catch {
-  Write-Host "*** Copy settings failed: $($_.Exception.Message)"
-  Write-Host "*** At: $($_.InvocationInfo.ScriptName):$($_.InvocationInfo.ScriptLineNumber) Char:$($_.InvocationInfo.OffsetInLine)"
-  throw
-}

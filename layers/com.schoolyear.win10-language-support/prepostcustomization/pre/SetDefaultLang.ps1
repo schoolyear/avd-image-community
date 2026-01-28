@@ -179,31 +179,13 @@ try {
 
   $GeoID = (new-object System.Globalization.RegionInfo($languageTag.Split("-")[1])).GeoId
   UpdateRegionSettings($GeoID)
+  
   try {
     Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
+    Write-Host "*** Worked: Copy-UserInternationalSettingsToSystem"
   }
   catch {
-    Write-Host "*** Troubleshoot: Copy-UserInternationalSettingsToSystem not found"
-
-    Write-Host ("*** PSVersion: {0}  Edition: {1}  PSEdition: {2}" -f `
-        $PSVersionTable.PSVersion, $PSVersionTable.PSEdition, $PSVersionTable.PSVersion)
-
-    Write-Host ("*** OS: {0}  Version: {1}  Build: {2}" -f `
-      (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName,
-      (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId,
-      (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').CurrentBuild)
-
-    Write-Host "*** Command lookup:"
-    Write-Host ("*** Get-Command result: {0}" -f (Get-Command Copy-UserInternationalSettingsToSystem -ErrorAction SilentlyContinue))
-
-    Write-Host "*** Module lookup:"
-    Write-Host ("*** International module found: {0}" -f (Get-Module -ListAvailable International | Select-Object -First 1 | ForEach-Object Name))
-
-    Write-Host "*** DLL present:"
-    Write-Host ("*** Windows.Globalization.dll exists: {0}" -f (Test-Path "$env:windir\System32\Windows.Globalization.dll"))
-
-    Write-Host "*** Available International cmdlets:"
-    Get-Command -Module International -ErrorAction SilentlyContinue | Select-Object Name | ForEach-Object { Write-Host ("***  " + $_.Name) }
+    Write-Host "*** Unavailable: Copy-UserInternationalSettingsToSystem not found, that's fine"
 
   }
 
