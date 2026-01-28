@@ -94,7 +94,7 @@ function Install-LanguagePack {
                 catch {
                     Write-Host "*** AVD AIB CUSTOMIZER PHASE : Install language packs - Exception occurred***"
                     Write-Host $PSItem.Exception
-
+                    Start-Sleep -Seconds (20 * $i)
                     if ($i -eq 5) {
                         throw "Install-Language failed after 5 attempts"
                     }

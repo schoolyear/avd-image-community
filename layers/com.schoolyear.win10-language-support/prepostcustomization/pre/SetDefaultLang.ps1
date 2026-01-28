@@ -84,7 +84,7 @@ $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 Write-Host "*** Starting AVD AIB CUSTOMIZER PHASE: Set default Language ***"
 
 $templateFilePathFolder = "C:\AVDImage"
-# Reference: https://learn.microsoft.com/en-gb/powershell/module/languagepackmanagement/set-systempreferreduilanguage?view=windowsserver2022-ps
+
 # populate dictionary
 $LanguagesDictionary = @{}
 $LanguagesDictionary.Add("Arabic (Saudi Arabia)", "ar-SA")

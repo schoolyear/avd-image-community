@@ -8,18 +8,33 @@ Set-StrictMode -Version Latest
 $GeoId   = 176      # Netherlands
 $Culture = "nl-NL"  # formats/locale
 # Keyboard: Dutch (Netherlands) = 0413, US keyboard layout = 00020409 (common “Dutch language, US layout” combo)
-$InputLanguageId = "0413:00020409"
+
+$KeyboardId  = "00020409"   # US keyboard
+
+$ll = Get-WinUserLanguageList
+
+# Keep the language, force the keyboard to be first/active
+$ll | Where-Object LanguageTag -eq $Culture | ForEach-Object {
+    $_.InputMethodTips = @($KeyboardId)
+}
+
+Set-WinUserLanguageList $ll -Force
 
 #redundant
 
 try { get-WinSystemLocale } catch { Write-Host "***Get-WinSystemLocale failed (non-fatal): $($_.Exception.Message)" }
 try { get-WinHomeLocation } catch { Write-Host "***Get-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }
 try { get-SystemPreferredUILanguage } catch { Write-Host "***Get-SystemPreferredUILanguage failed (non-fatal): $($_.Exception.Message)" }
-
+set-Culture nl-NL
 
 try { Set-WinSystemLocale $Culture } catch { Write-Host "***Set-WinSystemLocale failed (non-fatal): $($_.Exception.Message)" }
 try { Set-WinHomeLocation -GeoId $GeoId } catch { Write-Host "***Set-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }
 try { Set-SystemPreferredUILanguage -Language $Culture } catch { Write-Host "***Set-SystemPreferredUILanguage failed (non-fatal): $($_.Exception.Message)" }
+
+try { get-WinSystemLocale } catch { Write-Host "***Get-WinSystemLocale failed (non-fatal): $($_.Exception.Message)" }
+try { get-WinHomeLocation } catch { Write-Host "***Get-WinHomeLocation failed (non-fatal): $($_.Exception.Message)" }
+try { get-SystemPreferredUILanguage } catch { Write-Host "***Get-SystemPreferredUILanguage failed (non-fatal): $($_.Exception.Message)" }
+set-Culture nl-NL
 
 # Preferred: cmdlet; Fallback: intl.xml via control.exe
 try {
@@ -32,4 +47,5 @@ try {
 }
 catch {
   Write-Host "Copy settings failed"
+  throw
 }
