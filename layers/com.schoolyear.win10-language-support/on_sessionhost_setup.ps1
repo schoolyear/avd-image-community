@@ -11,7 +11,7 @@ $Culture = "nl-NL"  # formats/locale
 $KeyboardId  = "00020409"   # US keyboard
 
 $ll = Get-WinUserLanguageList
-
+Get-WinUserLanguageList
 # Keep the language, force the keyboard to be first/active
 $ll | Where-Object LanguageTag -eq $Culture | ForEach-Object {
     $_.InputMethodTips = @($KeyboardId)

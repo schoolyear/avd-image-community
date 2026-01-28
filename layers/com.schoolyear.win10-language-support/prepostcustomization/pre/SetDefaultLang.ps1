@@ -143,24 +143,6 @@ try {
     $languageTag = $languageDetails[0]
     $GeoID = $languageDetails[1]
   }
-
-  $foundLanguage = $false;
-
-  try {
-    #install language pack in case the provided language is not installed
-    $installedLanguages = Get-InstalledLanguage
-    foreach ($languagePack in $installedLanguages) {
-      $languageID = $languagePack.LanguageId
-      if ($languageID -eq $LanguageTag) {
-        $foundLanguage = $true
-        break
-      }
-    } 
-  }
-  catch {
-    Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Exception occurred while installing language packs***"
-    Write-Host $PSItem.Exception
-  }
   
   $maxRetries = 5
   $retryDelaySeconds = 15
@@ -197,9 +179,34 @@ try {
 
   $GeoID = (new-object System.Globalization.RegionInfo($languageTag.Split("-")[1])).GeoId
   UpdateRegionSettings($GeoID)
+  try {
+    Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
+  }
+  catch {
+    Write-Host "*** Troubleshoot: Copy-UserInternationalSettingsToSystem not found"
 
-  Set-WinHomeLocation -GeoId $GeoID
-  Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
+    Write-Host ("*** PSVersion: {0}  Edition: {1}  PSEdition: {2}" -f `
+        $PSVersionTable.PSVersion, $PSVersionTable.PSEdition, $PSVersionTable.PSVersion)
+
+    Write-Host ("*** OS: {0}  Version: {1}  Build: {2}" -f `
+      (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ProductName,
+      (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').ReleaseId,
+      (Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion').CurrentBuild)
+
+    Write-Host "*** Command lookup:"
+    Write-Host ("*** Get-Command result: {0}" -f (Get-Command Copy-UserInternationalSettingsToSystem -ErrorAction SilentlyContinue))
+
+    Write-Host "*** Module lookup:"
+    Write-Host ("*** International module found: {0}" -f (Get-Module -ListAvailable International | Select-Object -First 1 | ForEach-Object Name))
+
+    Write-Host "*** DLL present:"
+    Write-Host ("*** Windows.Globalization.dll exists: {0}" -f (Test-Path "$env:windir\System32\Windows.Globalization.dll"))
+
+    Write-Host "*** Available International cmdlets:"
+    Get-Command -Module International -ErrorAction SilentlyContinue | Select-Object Name | ForEach-Object { Write-Host ("***  " + $_.Name) }
+
+  }
+
 } 
 catch {
   Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Exception occurred***"
