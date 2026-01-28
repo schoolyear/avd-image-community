@@ -181,6 +181,7 @@ try {
   UpdateRegionSettings($GeoID)
   
   try {
+    Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language: Copy-UserInternationalSettingsToSystem"
     Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
     Write-Host "*** Worked: Copy-UserInternationalSettingsToSystem"
   }
