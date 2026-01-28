@@ -9,8 +9,4 @@ Param (
          
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
-$ProgressPreference = 'SilentlyContinue'
-
-Write-Host "===  run setLanguage.ps1 ==="
-& .\install_scripts\setLanguage.ps1 -LanguageList $LanguageList
-Write-Host "=== Done with setLanguage.ps1 ==="                         
+$ProgressPreference = 'SilentlyContinue'       

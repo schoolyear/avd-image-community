@@ -35,16 +35,12 @@ try { get-WinHomeLocation } catch { Write-Host "***Get-WinHomeLocation failed (n
 try { get-SystemPreferredUILanguage } catch { Write-Host "***Get-SystemPreferredUILanguage failed (non-fatal): $($_.Exception.Message)" }
 set-Culture nl-NL
 
-# Preferred: cmdlet; Fallback: intl.xml via control.exe
 try {
-  if (-not (Test-Command "Copy-UserInternationalSettingsToSystem")) {
-    throw "Copy-UserInternationalSettingsToSystem not available"
-  }
-
   Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
   Write-Host "***Copy-UserInternationalSettingsToSystem succeeded."
 }
 catch {
-  Write-Host "Copy settings failed"
+  Write-Host "*** Copy settings failed: $($_.Exception.Message)"
+  Write-Host "*** At: $($_.InvocationInfo.ScriptName):$($_.InvocationInfo.ScriptLineNumber) Char:$($_.InvocationInfo.OffsetInLine)"
   throw
 }

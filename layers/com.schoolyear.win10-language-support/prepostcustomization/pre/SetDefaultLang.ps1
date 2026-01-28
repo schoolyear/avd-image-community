@@ -161,31 +161,6 @@ try {
     Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Exception occurred while installing language packs***"
     Write-Host $PSItem.Exception
   }
-
-  if (-Not $foundLanguage) {
-    # retry in case we hit transient errors
-    for ($i = 1; $i -le 5; $i++) {
-      try {
-        Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs -  Attempt: $i ***"   
-        Install-Language -Language $LanguageTag -ErrorAction Stop
-        Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs -  Installed language $LanguageCode ***"   
-        break
-      }
-      catch {
-        Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs - Exception occurred***"
-        Write-Host $PSItem.Exception
-
-        if ($i -eq 5) {
-          throw "Install-Language failed after 5 attempts"
-        }
-        
-        continue
-      }
-    }
-  }
-  else {
-    Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Language pack for $LanguageTag is installed already***"
-  }
   
   $maxRetries = 5
   $retryDelaySeconds = 15
@@ -202,7 +177,7 @@ try {
     catch {
       Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Set-SystemPreferredUILanguage failed on attempt $i : [$($_.Exception.Message)] ***"
       if ($i -lt $maxRetries) {
-        Start-Sleep -Seconds $retryDelaySeconds
+        Start-Sleep -Seconds ($retryDelaySeconds * $i)
       }
     }
   }
@@ -222,10 +197,14 @@ try {
 
   $GeoID = (new-object System.Globalization.RegionInfo($languageTag.Split("-")[1])).GeoId
   UpdateRegionSettings($GeoID)
+
+  Set-WinHomeLocation -GeoId $GeoID
+  Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
 } 
 catch {
   Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language - Exception occurred***"
   Write-Host $PSItem.Exception
+  exit 1
 }
 
 if ((Test-Path -Path $templateFilePathFolder -ErrorAction SilentlyContinue)) {
