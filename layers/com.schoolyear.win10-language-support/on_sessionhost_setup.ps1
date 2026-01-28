@@ -7,7 +7,6 @@ Set-StrictMode -Version Latest
 # --- Settings ---
 $GeoId   = 176      # Netherlands
 $Culture = "nl-NL"  # formats/locale
-# Keyboard: Dutch (Netherlands) = 0413, US keyboard layout = 00020409 (common “Dutch language, US layout” combo)
 
 $KeyboardId  = "00020409"   # US keyboard
 
