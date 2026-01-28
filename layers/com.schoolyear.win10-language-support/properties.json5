@@ -132,7 +132,7 @@
                     "# --- Execute ---",
                     "Write-Host \"[LanguageSupport] Setting default language: $windowsLanguage\"",
                     "& $defaultLangScript -Language $windowsLanguage",
-                    "Write-Host \"[LanguageSupport] Step 2 completed successfully\""
+                    "Write-Host \"[LanguageSupport] Step 2 done\""
         ],
         "system": true,
         "elevated": true
