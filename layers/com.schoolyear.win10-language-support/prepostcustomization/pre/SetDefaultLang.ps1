@@ -174,6 +174,11 @@ try {
       catch {
         Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set default language - Install language packs - Exception occurred***"
         Write-Host $PSItem.Exception
+
+        if ($i -eq 5) {
+          throw "Install-Language failed after 5 attempts"
+        }
+        
         continue
       }
     }
