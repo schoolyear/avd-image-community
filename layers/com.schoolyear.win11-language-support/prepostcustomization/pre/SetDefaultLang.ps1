@@ -180,17 +180,13 @@ try {
   $GeoID = (new-object System.Globalization.RegionInfo($languageTag.Split("-")[1])).GeoId
   UpdateRegionSettings($GeoID)
   
-  try {
+
     #This only works on Win11
     Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language: Copy-UserInternationalSettingsToSystem"
     Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
     Write-Host "*** Worked: Copy-UserInternationalSettingsToSystem"
     Write-Output "*** Worked: Copy-UserInternationalSettingsToSystem (more reliable)"
-  }
-  catch {
-    Write-Host "*** Unavailable: Copy-UserInternationalSettingsToSystem not found, that's fine"
 
-  }
 
 } 
 catch {

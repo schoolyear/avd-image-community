@@ -1,7 +1,7 @@
 {
   version: "v2",
-  name: "com.schoolyear.win10-office365",
-  description: "Configure the base image to win10-office365 and whitelists the required URLs. No default language support.",
+  name: "com.schoolyear.win11-office365",
+  description: "Configure the base image to win11-office365 and whitelists the required URLs. No default language support.",
   author: {
     name: "Schoolyear",
     email: "avd@schoolyear.com"
@@ -11,7 +11,7 @@
     type: "PlatformImage",
     publisher: "microsoftwindowsdesktop",
     version: "latest",
-    sku: "win10-22h2-avd-m365-g2",
+    sku: "win11-25h2-avd-m365",
     offer: "office-365"
   },
   network: {
