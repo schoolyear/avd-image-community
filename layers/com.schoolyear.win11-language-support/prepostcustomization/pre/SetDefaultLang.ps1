@@ -181,11 +181,11 @@ try {
   UpdateRegionSettings($GeoID)
   
 
-    #This only works on Win11
-    Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language: Copy-UserInternationalSettingsToSystem"
-    Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
-    Write-Host "*** Worked: Copy-UserInternationalSettingsToSystem"
-    Write-Output "*** Worked: Copy-UserInternationalSettingsToSystem (more reliable)"
+  #This only works on Win11
+  Write-Host "*** AVD AIB CUSTOMIZER PHASE: Set default Language: Copy-UserInternationalSettingsToSystem"
+  Copy-UserInternationalSettingsToSystem -NewUser $true -WelcomeScreen $true
+  Write-Host "*** Worked: Copy-UserInternationalSettingsToSystem"
+  Write-Output "*** Worked: Copy-UserInternationalSettingsToSystem (more reliable)"
 
 
 } 
