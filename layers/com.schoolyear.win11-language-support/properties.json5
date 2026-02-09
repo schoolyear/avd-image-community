@@ -1,7 +1,7 @@
 
 {
   version: "v2.1",
-  name: "com.schoolyear.win10-language-support",
+  name: "com.schoolyear.win11-language-support",
   description: "Add language support for your base image. Installs the selected language pack and sets the default language.",
   author: {
     name: "Schoolyear",
@@ -114,9 +114,9 @@
                     "$windowsLanguage = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win10-language-support'.windowsLanguage.value)",
                     "if ([string]::IsNullOrEmpty($windowsLanguage)) { throw \"windowsLanguage cannot be empty\" }",
                     "Write-Host \"[LanguageSupport] Selected language: $windowsLanguage\"",
-                    "# --- Locate layer folder: 000–999-com.schoolyear.win10-language-support ---",
+                    "# --- Locate layer folder: 000–999-com.schoolyear.win11-language-support ---",
                     "Write-Host \"[LanguageSupport] Searching for language-support layer under C:\\image_bundle\"",
-                    "$layerDirs = Get-ChildItem \"C:\\image_bundle\" -Directory | Where-Object { $_.Name -match '^\\d{3}-com\\.schoolyear\\.win10-language-support$' }",
+                    "$layerDirs = Get-ChildItem \"C:\\image_bundle\" -Directory | Where-Object { $_.Name -match '^\\d{3}-com\\.schoolyear\\.win11-language-support$' }",
                     "Write-Host \"[LanguageSupport] Found $(@($layerDirs).Count) matching layer folder(s)\"",
                     "if ($layerDirs.Count -eq 0) { throw \"Language-support layer folder not found under C:\\image_bundle\" }",
                     "if ($layerDirs.Count -gt 1) { throw \"Multiple language-support layer folders found: $($layerDirs.Name -join ', ')\" }",
