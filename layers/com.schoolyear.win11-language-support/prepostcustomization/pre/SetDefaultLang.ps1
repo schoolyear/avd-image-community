@@ -215,7 +215,7 @@ $viveToolDir = "$tempPath\ViVeTool"
 New-Item -Path $viveToolDir -ItemType Directory -Force | Out-Null
 
 $viveToolExe = "$viveToolDir\ViVeTool.exe"
-$featureIds = @(47557358, 45833058)
+$featureIds = @(47557358, 44353396)
 
 
 # Ensure ViVeTool exists
