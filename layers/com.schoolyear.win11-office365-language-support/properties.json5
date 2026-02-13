@@ -1,10 +1,10 @@
 {
-  version: "v2",
-  name: "com.schoolyear.win11-office365",
-  description: "Configure the base image to win11-office365 and whitelists the required URLs. No default language support.",
+  version: "v2.1",
+  name: "nl.zuyd.office365-nl",
+  description: "office_nl",
   author: {
-    name: "Schoolyear",
-    email: "avd@schoolyear.com"
+    name: "John Doe (example org)",
+    email: "j.doe@example.com"
   },
   platform_version: "2",
   base_image: {
@@ -15,11 +15,17 @@
     offer: "office-365"
   },
   network: {
+    // HTTP(s) hosts that are whitelisted in the proxy
+    // note that the application must be configured to use the proxy or support Windows IE proxy settings
+    //
+    // list of whitelisted hostname:port combinations. Supports * wildcards
     http_proxy_whitelist: [
       "officeclient.microsoft.com:443",
       "odc*.officeapps.live.com:443",
       "ols.officeapps.live.com:443",
       "licensing.m365.svc.cloud.microsoft:443"
     ],
-  }
+  },
+  build_parameters: {
+     }
 }
