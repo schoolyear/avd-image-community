@@ -93,29 +93,14 @@ $inputlocale = $LanguagesDictionary[$windowsLanguage].Culture
 Write-Host "Language installation: input locale is $inputlocale "
 
 $geoId = $LanguagesDictionary[$windowsLanguage].GeoId
-Write-Host "Language installation:Geo id is $geoId "
+Write-Host "Language installation: Geo id is $geoId "
 
 #Install language pack and change the language of the OS on different places
 
 #Install an additional language pack including FODs
 Write-Host "Language installation: Installing languagepack"
-$maxRetries = 5
-$delaySec  = 10
 
-for ($i = 1; $i -le $maxRetries; $i++) {
-    try {
-        Install-Language $LPlanguage -CopyToSettings
-        Write-Host "Language installation: succeeded on attempt $i"
-        break
-    }
-    catch {
-        Write-Host "Language installation: failed on attempt $i : $($_.Exception.Message)"
-        if ($i -eq $maxRetries) {
-            throw
-        }
-        Start-Sleep -Seconds $delaySec
-    }
-}
+Install-Language $LPlanguage -CopyToSettings
 
 #Check status of the installed language pack
 Write-Host "Language installation: Checking installed languagepack status"
