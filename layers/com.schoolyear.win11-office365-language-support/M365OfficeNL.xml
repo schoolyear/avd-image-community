@@ -1,13 +1,13 @@
 <Configuration>
   <Add OfficeClientEdition="64" Channel="Current">
     <Product ID="O365ProPlusRetail">
-      <Language ID="nl-nl" />
+      <Language ID="__ODT_LANG__" />
     </Product>
 	<Product ID="LanguagePack">
-      <Language ID="nl-nl" />
+      <Language ID="__ODT_LANG__" />
     </Product>
 	<Product ID="ProofingTools">
-      <Language ID="nl-nl" />
+      <Language ID="__ODT_LANG__" />
     </Product>
   </Add>
   <Updates Enabled="TRUE" />

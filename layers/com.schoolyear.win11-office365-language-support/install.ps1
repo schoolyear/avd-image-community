@@ -1,18 +1,7 @@
-# <CAN BE REMOVED>
-# This script is executed during the preparation of the exam image
-# This script is executed before the sysprep step
-#
-# This script is executed in its own layer folder
-# So, any file in this image layer, is available in the current working directory
-#
-# Once all installation scripts are executed, all image layer files are deleted
-# If you want to persist a file in the image, you must copy it to another folder
-# </CAN BE REMOVED>
-
 Param (
-
-    [Parameter(ValueFromRemainingArguments)]
-    [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
+  [Parameter(Mandatory)]
+  [ValidateSet("Arabic (Saudi Arabia)", "Bulgarian (Bulgaria)", "Chinese (Simplified, China)", "Chinese (Traditional, Taiwan)", "Croatian (Croatia)", "Czech (Czech Republic)", "Danish (Denmark)", "Dutch (Netherlands)", "English (United Kingdom)", "Estonian (Estonia)", "Finnish (Finland)", "French (Canada)", "French (France)", "German (Germany)", "Greek (Greece)", "Hebrew (Israel)", "Hungarian (Hungary)", "Italian (Italy)", "Japanese (Japan)", "Korean (Korea)", "Latvian (Latvia)", "Lithuanian (Lithuania)", "Norwegian, Bokmål (Norway)", "Polish (Poland)", "Portuguese (Brazil)", "Portuguese (Portugal)", "Romanian (Romania)", "Russian (Russia)", "Serbian (Latin, Serbia)", "Slovak (Slovakia)", "Slovenian (Slovenia)", "Spanish (Mexico)", "Spanish (Spain)", "Swedish (Sweden)", "Thai (Thailand)", "Turkish (Turkey)", "Ukrainian (Ukraine)", "English (Australia)", "English (United States)")]
+  [string]$windowsLanguage
 )
 
 # Recommended snippet to make sure PowerShell stops execution on failure
@@ -25,19 +14,6 @@ Set-StrictMode -Version Latest
 # This makes the downloads considerably faster
 $ProgressPreference = 'SilentlyContinue'
 
-## EXAMPLE: WHITELIST IP
-## NOTE: Due to limitations in Azure, only TCP and UDP are supported
-## NOTE: It is recommended to configure any IP address or port as a build parameter. These things tend to change **and** allows you to share your layers with others
-#
-# New-NetFirewallRule -DisplayName 'allow-ip' -Direction Outbound -Action Allow -RemoteAddress '1.2.3.4' -Protocol TCP -RemotePort 8080 -Profile Any -ErrorAction Stop
-
-## EXAMPLE: WHITELIST HOSTNAME
-## NOTE: Due to limitations in Azure, only TCP and UDP are supported
-## NOTE: It is recommended to configure any IP address or port as a build parameter. These things tend to change **and** allows you to share your layers with others
-## NOTE: Only use hostname whitelisting when you are sure no other resources are hosted on IP(s) to which this hostname resolves.
-##       The actual IP addresses of this hostname will be whitelisted. Any resource hosted on these servers will be accessible to students. Not only the hostname you configure here
-#
-# New-NetFirewallDynamicKeywordAddress -Id "{any-unique-guid}" -Keyword "example.com" -AutoResolve $true
-# New-NetFirewallRule -DisplayName "Allow All Outbound to example.com" -Direction Outbound -Action Allow -RemoteDynamicKeywordAddresses (Get-NetFirewallDynamicKeywordAddress -Keyword "example.com").ID
-
-& .\OfficeLanguage.ps1
+Write-Host "=== Change configuration file ==="
+& .\install_scripts\change_office_configuration_file.ps1 -windowsLanguage $windowsLanguage
+Write-Host "=== Done with changing configuration file ==="
