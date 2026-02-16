@@ -56,6 +56,10 @@ Write-Host "Change Office configuration file: setting variable"
 
 $odtLang = $LanguagesDictionary[$windowsLanguage].Culture.ToLowerInvariant()
 
-Write-Host "Language installation: Language tag is $LPlanguage "
+Write-Host "Change Office configuration file: odtLang is $odtLang "
+$TemplateXmlPath = ".\resources\M365OfficeTemplate.xml"
+$OutXmlPath = ".\resources\M365Office.xml"
+
 (Get-Content $TemplateXmlPath -Raw).Replace("__ODT_LANG__", $odtLang) |
   Set-Content -LiteralPath $OutXmlPath -Encoding UTF8
+Write-Host "Change Office configuration file: Changed language in config file"

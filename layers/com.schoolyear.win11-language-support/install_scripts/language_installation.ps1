@@ -99,7 +99,23 @@ Write-Host "Language installation:Geo id is $geoId "
 
 #Install an additional language pack including FODs
 Write-Host "Language installation: Installing languagepack"
-Install-Language $LPlanguage -CopyToSettings
+$maxRetries = 5
+$delaySec  = 10
+
+for ($i = 1; $i -le $maxRetries; $i++) {
+    try {
+        Install-Language $LPlanguage -CopyToSettings
+        Write-Host "Language installation: succeeded on attempt $i"
+        break
+    }
+    catch {
+        Write-Host "Language installation: failed on attempt $i : $($_.Exception.Message)"
+        if ($i -eq $maxRetries) {
+            throw
+        }
+        Start-Sleep -Seconds $delaySec
+    }
+}
 
 #Check status of the installed language pack
 Write-Host "Language installation: Checking installed languagepack status"

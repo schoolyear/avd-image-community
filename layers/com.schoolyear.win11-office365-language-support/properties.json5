@@ -1,10 +1,10 @@
 {
   version: "v2.1",
-  name: "nl.zuyd.office365-nl",
-  description: "office_nl",
+  name: "com.schoolyear.win11-office365-language-support",
+  description: "Office layer with language support",
   author: {
-    name: "John Doe (example org)",
-    email: "j.doe@example.com"
+    name: "Schoolyear",
+    email: "avd@schoolyear.com"
   },
   platform_version: "2",
   base_image: {
@@ -27,5 +27,50 @@
     ],
   },
   build_parameters: {
+        windowsLanguage: {
+      description: "Set the language of windows",
+      enum: [
+        "Arabic (Saudi Arabia)",
+        "Bulgarian (Bulgaria)",
+        "Chinese (Simplified, China)",
+        "Chinese (Traditional, Taiwan)",
+        "Croatian (Croatia)",
+        "Czech (Czech Republic)",
+        "Danish (Denmark)",
+        "Dutch (Netherlands)",
+        "English (United Kingdom)",
+        "Estonian (Estonia)",
+        "Finnish (Finland)",
+        "French (Canada)",
+        "French (France)",
+        "German (Germany)",
+        "Greek (Greece)",
+        "Hebrew (Israel)",
+        "Hungarian (Hungary)",
+        "Italian (Italy)",
+        "Japanese (Japan)",
+        "Korean (Korea)",
+        "Latvian (Latvia)",
+        "Lithuanian (Lithuania)",
+        "Norwegian, Bokmål (Norway)",
+        "Polish (Poland)",
+        "Portuguese (Brazil)",
+        "Portuguese (Portugal)",
+        "Romanian (Romania)",
+        "Russian (Russia)",
+        "Serbian (Latin, Serbia)",
+        "Slovak (Slovakia)",
+        "Slovenian (Slovenia)",
+        "Spanish (Mexico)",
+        "Spanish (Spain)",
+        "Swedish (Sweden)",
+        "Thai (Thailand)",
+        "Turkish (Turkey)",
+        "Ukrainian (Ukraine)",
+        "English (Australia)",
+        "English (United States)"
+      ],
+      default: "English (United States)"
+    }
      }
 }

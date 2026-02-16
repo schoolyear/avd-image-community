@@ -6,5 +6,5 @@ By using the Azure-provided default image, no Office installation needs to be pe
 This layer only allows a small portion of the FQDNs used by Office, such that the online features such as file sync are not available.
 Office activation is allowed to be performed over the network.
 
-This layer also allows a user to select a different language than en-US.
+This layer also allows a user to select a different language than en-US. Many thanks to Maarten Poell from Zuyd Hogeschool for his contributions.
 

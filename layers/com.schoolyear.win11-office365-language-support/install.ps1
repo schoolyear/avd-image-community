@@ -17,3 +17,7 @@ $ProgressPreference = 'SilentlyContinue'
 Write-Host "=== Change configuration file ==="
 & .\install_scripts\change_office_configuration_file.ps1 -windowsLanguage $windowsLanguage
 Write-Host "=== Done with changing configuration file ==="
+
+Write-Host "=== Change office configuration ==="
+& .\install_scripts\office_language.ps1
+Write-Host "=== Done with changing configuration file ==="
