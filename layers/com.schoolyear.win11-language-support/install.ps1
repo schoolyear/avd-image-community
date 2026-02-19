@@ -9,10 +9,6 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 $ProgressPreference = 'SilentlyContinue'
 
-Write-Host "=== Install and set new Windows Language ==="
-& .\install_scripts\language_installation.ps1 -windowsLanguage $windowsLanguage
-Write-Host "=== Done with installing and setting new Windows Language ==="
-
 Write-Host "=== Remove extra login screen for Office ==="
 & .\install_scripts\remove_extra_login_office.ps1
 Write-Host "=== Done with removing extra login screen for Office ==="

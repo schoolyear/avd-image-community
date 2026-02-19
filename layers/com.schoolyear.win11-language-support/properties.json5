@@ -56,11 +56,54 @@
     }
   },
   customizers: {
-    post: [
-      {
-        type: "WindowsRestart",
-        name: "LanguagePackPostInstallWindowsRestart"
-      }
+    pre: [
+{
+  type: "PowerShell",
+  name: "CONF_InstallLanguagePacks",
+  inline: [
+    "$ErrorActionPreference = \"Stop\"",
+
+    "Write-Host \"[LanguageSupport] Starting language-support pre-customization phase\"",
+
+    "# --- Read build parameter ---",
+    "Write-Host \"[LanguageSupport] Checking build_parameters.json\"",
+    "if (!(Test-Path \"C:\\image_bundle\\build_parameters.json\")) { throw \"build_parameters.json not found\" }",
+
+    "$windowsLanguage = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language-support'.windowsLanguage.value)",
+    "if ([string]::IsNullOrEmpty($windowsLanguage)) { throw \"windowsLanguage cannot be empty\" }",
+    "Write-Host \"[LanguageSupport] Selected language: $windowsLanguage\"",
+
+    "# --- Locate layer folder ---",
+    "Write-Host \"[LanguageSupport] Searching for language-support layer under C:\\image_bundle\"",
+    "$layerDirs = Get-ChildItem \"C:\\image_bundle\" -Directory | Where-Object { $_.Name -match '^\\d{3}-com\\.schoolyear\\.win11-language-support$' }",
+    "if ($layerDirs.Count -eq 0) { throw \"Language-support layer folder not found\" }",
+    "if ($layerDirs.Count -gt 1) { throw \"Multiple language-support layer folders found: $($layerDirs.Name -join ', ')\" }",
+
+    "$scriptRoot = Join-Path $layerDirs[0].FullName \"pre_customization\"",
+    "Write-Host \"[LanguageSupport] Script root: $scriptRoot\"",
+    "if (!(Test-Path $scriptRoot)) { throw \"Script folder not found: $scriptRoot\" }",
+
+    "# --- Resolve and execute all pre scripts ---",
+    "$scripts = Get-ChildItem -LiteralPath $scriptRoot -Filter '*.ps1' -File | Sort-Object Name",
+    "if ($scripts.Count -eq 0) { throw \"No scripts found in $scriptRoot\" }",
+
+    "foreach ($script in $scripts) {",
+    "  Write-Host \"[LanguageSupport] Running: $($script.Name)\"",
+    "  $params = (Get-Command -Name $script.FullName).Parameters",
+    "  if ($params.ContainsKey('windowsLanguage')) {",
+    "    & $script.FullName -windowsLanguage $windowsLanguage",
+    "  } else {",
+    "    & $script.FullName",
+    "  }",
+    "  Write-Host \"[LanguageSupport] Completed: $($script.Name)\"",
+    "}",
+
+    "Write-Host \"[LanguageSupport] All pre-customization scripts completed successfully\""
+  ],
+  system: true,
+  elevated: true
+}
+
     ],
   }
 }
