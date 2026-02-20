@@ -10,7 +10,12 @@
 # </CAN BE REMOVED>
 
 Param (
-    # You can configure your own paramter in the properties.json5 file
+    # Controls whether the Office privacy scheduled task should be created
+    [Parameter()]
+    [ValidateSet("on", "off")]
+    [string]$officePrivacyTask = "on",
+
+    # You can configure your own parameter in the properties.json5 file
     [Parameter(ValueFromRemainingArguments)]
     [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
 )
@@ -28,6 +33,11 @@ $ProgressPreference = 'SilentlyContinue'
 # install.ps1
 # Creates a scheduled task that runs at *user logon* (i.e., in the user's context)
 # and sets: HKCU\Software\Microsoft\Office\16.0\Common\PrivacyDialogsDisabled=1
+
+if ($officePrivacyTask -eq "off") {
+  Write-Host "[OfficePrivacyTask] Skipping scheduled task creation because officePrivacyTask=off"
+  exit 0
+}
 
 $TaskName = "SY-OfficePrivacyDialogsOnLogon"
 $TaskPath = "\Schoolyear\"

@@ -21,5 +21,12 @@
       "ols.officeapps.live.com:443",
       "licensing.m365.svc.cloud.microsoft:443"
     ],
+  },
+  build_parameters: {
+    officePrivacyTask: {
+      description: "Toggle creation of the Office privacy scheduled task",
+      enum: ["on", "off"],
+      default: "on"
+    }
   }
 }
