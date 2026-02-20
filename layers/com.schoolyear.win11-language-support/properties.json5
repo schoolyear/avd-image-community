@@ -50,7 +50,8 @@
         "Turkish (Turkey)",
         "Ukrainian (Ukraine)",
         "English (Australia)",
-        "English (United States)"
+        "English (United States)",
+        "Keep current language (no change)"
       ],
       default: "English (United States)"
     },

@@ -88,91 +88,87 @@ If ($ENV:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
 #Set variables (change to your needs):
 Write-Host "Language installation: setting variables"
 
-$LPlanguage = $LanguagesDictionary[$windowsLanguage].Culture
-Write-Host "Language installation: Language tag is $LPlanguage "
-# As In some countries the input locale might differ from the installed language pack language, we use a separate input local variable.
-
-$inputlocale = $LanguagesDictionary[$windowsLanguage].Culture
-Write-Host "Language installation: input locale is $inputlocale "
+$keepCurrentLanguage = $windowsLanguage -eq "Keep current language (no change)"
 Write-Host "Language installation: keyboard layout option is $keyboardLayout "
 
-$geoId = $LanguagesDictionary[$windowsLanguage].GeoId
-Write-Host "Language installation: Geo id is $geoId "
+if ($keepCurrentLanguage) {
+    Write-Host "Language installation: Keeping current language settings"
+    $currentLanguageList = Get-WinUserLanguageList
+    if ($null -eq $currentLanguageList -or $currentLanguageList.Count -eq 0) {
+        Throw "No existing user language list found while keep-current mode was requested."
+    }
 
-#Install language pack and change the language of the OS on different places
-
-#Install an additional language pack including FODs
-Write-Host "Language installation: Installing languagepack"
-
-Install-Language $LPlanguage -CopyToSettings
-
-#Check status of the installed language pack
-Write-Host "Language installation: Checking installed languagepack status"
-$installedLanguage = (Get-InstalledLanguage).LanguageId
-
-if ($installedLanguage -like $LPlanguage){
-	Write-Host "Language $LPlanguage installed"
-	}
-	else {
-	Write-Host "Failure! Language $LPlanguage NOT installed"
-    Exit 1
+    $inputlocale = $currentLanguageList[0].LanguageTag
+    $geoId = (Get-WinHomeLocation).GeoId
+    Write-Host "Language installation: current input locale is $inputlocale "
+    Write-Host "Language installation: current Geo id is $geoId "
 }
+else {
+    $LPlanguage = $LanguagesDictionary[$windowsLanguage].Culture
+    Write-Host "Language installation: Language tag is $LPlanguage "
+    # As In some countries the input locale might differ from the installed language pack language, we use a separate input local variable.
+    $inputlocale = $LanguagesDictionary[$windowsLanguage].Culture
+    Write-Host "Language installation: input locale is $inputlocale "
 
-#Set System Preferred UI Language
-Write-Host "Language installation: Setting SystemPreferredUILanguage $inputlocale"
-Set-SystemPreferredUILanguage $inputlocale
+    $geoId = $LanguagesDictionary[$windowsLanguage].GeoId
+    Write-Host "Language installation: Geo id is $geoId "
 
-# Configure new language defaults under current user (system) after which it can be copied to system
-#Set Win UI Language Override for regional changes
-Write-Host "Language installation: Setting WinUILanguageOverride $inputlocale"
-Set-WinUILanguageOverride -Language $inputlocale
+    #Install language pack and change the language of the OS on different places
+    #Install an additional language pack including FODs
+    Write-Host "Language installation: Installing languagepack"
+    Install-Language $LPlanguage -CopyToSettings
+
+    #Check status of the installed language pack
+    Write-Host "Language installation: Checking installed languagepack status"
+    $installedLanguage = (Get-InstalledLanguage).LanguageId
+    if ($installedLanguage -like $LPlanguage) {
+        Write-Host "Language $LPlanguage installed"
+    }
+    else {
+        Write-Host "Failure! Language $LPlanguage NOT installed"
+        Exit 1
+    }
+
+    #Set System Preferred UI Language
+    Write-Host "Language installation: Setting SystemPreferredUILanguage $inputlocale"
+    Set-SystemPreferredUILanguage $inputlocale
+
+    # Configure new language defaults under current user (system) after which it can be copied to system
+    #Set Win UI Language Override for regional changes
+    Write-Host "Language installation: Setting WinUILanguageOverride $inputlocale"
+    Set-WinUILanguageOverride -Language $inputlocale
+}
 
 # Set Win User Language List, sets the current user language settings
 Write-Host "Language installation: Setting WinUserLanguageList"
-$OldList = Get-WinUserLanguageList
-$UserLanguageList = New-WinUserLanguageList -Language $inputlocale
-$UserLanguageList += $OldList | where { $_.LanguageTag -ne $inputlocale }
-$UserLanguageList | select LanguageTag
-Set-WinUserLanguageList -LanguageList $UserLanguageList -Force
-
-# Ensure keyboard/input default follows the target language instead of a prior fallback (for example en-US)
-Write-Host "Language installation: Setting WinDefaultInputMethodOverride"
-$AppliedList = Get-WinUserLanguageList
-$PrimaryEntry = $AppliedList | Where-Object { $_.LanguageTag -eq $inputlocale } | Select-Object -First 1
-$defaultInputTip = $null
-
-if ($null -ne $PrimaryEntry -and $null -ne $PrimaryEntry.InputMethodTips -and $PrimaryEntry.InputMethodTips.Count -gt 0) {
-    $defaultInputTip = $PrimaryEntry.InputMethodTips[0]
+if ($keepCurrentLanguage) {
+    $UserLanguageList = Get-WinUserLanguageList
 }
 else {
-    # Fallback: derive a keyboard TIP from locale metadata if InputMethodTips is not populated yet
-    $cultureInfo = [System.Globalization.CultureInfo]::GetCultureInfo($inputlocale)
-    $langHex = $cultureInfo.LCID.ToString("X4")
-    $layoutHex = $cultureInfo.KeyboardLayoutId.ToString("X8")
-    $defaultInputTip = "$langHex`:$layoutHex"
+    $UserLanguageList = New-WinUserLanguageList -Language $inputlocale
 }
 
 if ($keyboardLayout -eq "English (United States) - US International") {
-    # en-US International keyboard layout (TIP)
-    $defaultInputTip = "0409:00020409"
+    # Override keyboard only, while keeping a minimal language list
+    $UserLanguageList[0].InputMethodTips = @("0409:00020409")
 }
 
-Write-Host "Language installation: Default InputTip is $defaultInputTip"
-Set-WinDefaultInputMethodOverride -InputTip $defaultInputTip
-$currentInputOverride = Get-WinDefaultInputMethodOverride
-Write-Host "Language installation: WinDefaultInputMethodOverride is $($currentInputOverride.InputTip)"
+$UserLanguageList | Select-Object LanguageTag, InputMethodTips
+Set-WinUserLanguageList -LanguageList $UserLanguageList -Force
 
-# Set Culture, sets the user culture for the current user account.
-Write-Host "Language installation: Setting culture $inputlocale"
-Set-Culture -CultureInfo $inputlocale
+if (-not $keepCurrentLanguage) {
+    # Set Culture, sets the user culture for the current user account.
+    Write-Host "Language installation: Setting culture $inputlocale"
+    Set-Culture -CultureInfo $inputlocale
 
-# Set Win Home Location, sets the home location setting for the current user 
-Write-Host "Language installation: Setting WinHomeLocation $geoId"
-Set-WinHomeLocation -GeoId $geoId
+    # Set Win Home Location, sets the home location setting for the current user
+    Write-Host "Language installation: Setting WinHomeLocation $geoId"
+    Set-WinHomeLocation -GeoId $geoId
 
-# Copy User International Settings from current user to System, including Welcome screen and new user
-Write-Host "Language installation: Copy UserInternationalSettingsToSystem"
-Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
+    # Copy User International Settings from current user to System, including Welcome screen and new user
+    Write-Host "Language installation: Copy UserInternationalSettingsToSystem"
+    Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
+}
 
 # A restart is performed after all normal layers. So this script does not require one.
 
