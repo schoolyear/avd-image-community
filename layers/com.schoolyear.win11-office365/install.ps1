@@ -25,75 +25,32 @@ Set-StrictMode -Version Latest
 # This makes the downloads considerably faster
 $ProgressPreference = 'SilentlyContinue'
 
-$Hive = "HKU\DefaultUser"
-$Dat  = "C:\Users\Default\NTUSER.DAT"
+# install.ps1
+# Creates a scheduled task that runs at *user logon* (i.e., in the user's context)
+# and sets: HKCU\Software\Microsoft\Office\16.0\Common\PrivacyDialogsDisabled=1
 
-function Test-HiveLoaded([string]$HiveName) {
-    & $env:ComSpec /c "reg.exe query `"$HiveName`" >nul 2>nul"
-    return ($LASTEXITCODE -eq 0)
-}
+$TaskName = "SY-OfficePrivacyDialogsOnLogon"
+$TaskPath = "\Schoolyear\"
 
-Write-Host "[DefaultUserHive] Loading hive from $Dat ..."
-& reg.exe load $Hive $Dat
-if ($LASTEXITCODE -ne 0) {
-    throw "[DefaultUserHive] reg load failed with exit code $LASTEXITCODE"
-}
+Write-Host "[OfficePrivacyTask] Creating scheduled task: $TaskPath$TaskName"
 
-try {
-    Write-Host "[DefaultUserHive] Setting Office privacy registry value..."
-    & reg.exe add "HKU\DefaultUser\Software\Microsoft\Office\16.0\Common" `
-        /v PrivacyDialogsDisabled `
-        /t REG_DWORD `
-        /d 1 `
-        /f
-    if ($LASTEXITCODE -ne 0) {
-        throw "[DefaultUserHive] reg add failed with exit code $LASTEXITCODE"
-    }
+# Run for the logged-on user (HKCU will be that user)
+$Command = 'reg.exe add "HKCU\Software\Microsoft\Office\16.0\Common" /v PrivacyDialogsDisabled /t REG_DWORD /d 1 /f'
 
-    Write-Host "[DefaultUserHive] Registry value set."
-}
-finally {
-    Write-Host "[DefaultUserHive] Unloading hive (strict mode)..."
+$Action    = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c $Command"
+$Trigger   = New-ScheduledTaskTrigger -AtLogOn
+$Principal = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Users" -RunLevel Limited
+$Settings  = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew
 
-    $TimeoutSeconds = 20
+Register-ScheduledTask `
+  -TaskName $TaskName `
+  -TaskPath $TaskPath `
+  -Action $Action `
+  -Trigger $Trigger `
+  -Principal $Principal `
+  -Settings $Settings | Out-Null
 
-    $psi = New-Object System.Diagnostics.ProcessStartInfo
-    $psi.FileName = "reg.exe"
-    $psi.Arguments = "unload $Hive"
-    $psi.UseShellExecute = $false
-    $psi.CreateNoWindow = $true
-    $psi.RedirectStandardOutput = $true
-    $psi.RedirectStandardError  = $true
-
-    $p = New-Object System.Diagnostics.Process
-    $p.StartInfo = $psi
-    $null = $p.Start()
-
-    if (-not $p.WaitForExit($TimeoutSeconds * 1000)) {
-        Write-Host "[DefaultUserHive] Unload timed out. Killing reg.exe (PID $($p.Id))..."
-        try { $p.Kill() } catch { }
-        try { $p.WaitForExit() } catch { }
-        throw "[DefaultUserHive] Unload timed out after ${TimeoutSeconds}s."
-    }
-
-    $stdout = $p.StandardOutput.ReadToEnd().Trim()
-    $stderr = $p.StandardError.ReadToEnd().Trim()
-
-    if ($stdout) { Write-Host "[DefaultUserHive] reg.exe stdout: $stdout" }
-    if ($stderr) { Write-Host "[DefaultUserHive] reg.exe stderr: $stderr" }
-
-    if ($p.ExitCode -ne 0) {
-        throw "[DefaultUserHive] reg unload failed (ExitCode=$($p.ExitCode))."
-    }
-
-    # Explicit verification
-    if (Test-HiveLoaded $Hive) {
-        throw "[DefaultUserHive] Hive still mounted after unload attempt."
-    }
-
-    Write-Host "[DefaultUserHive] Unload confirmed successful."
-}
-
-Write-Host "[DefaultUserHive] Completed successfully."
+Write-Host "[OfficePrivacyTask] Scheduled task created."
+Write-Host "[OfficePrivacyTask] Will run at logon in the user's context."
 
 
