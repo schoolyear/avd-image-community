@@ -1,6 +1,9 @@
 Param (
     [Parameter(Mandatory = $true)]
-    [string]$windowsLanguage
+    [string]$windowsLanguage,
+    [Parameter(Mandatory = $false)]
+    [ValidateSet("Default for language", "English (United States) - US International")]
+    [string]$keyboardLayout = "Default for language"
 )
 
 $ProgressPreference = 'SilentlyContinue'
@@ -91,6 +94,7 @@ Write-Host "Language installation: Language tag is $LPlanguage "
 
 $inputlocale = $LanguagesDictionary[$windowsLanguage].Culture
 Write-Host "Language installation: input locale is $inputlocale "
+Write-Host "Language installation: keyboard layout option is $keyboardLayout "
 
 $geoId = $LanguagesDictionary[$windowsLanguage].GeoId
 Write-Host "Language installation: Geo id is $geoId "
@@ -146,6 +150,11 @@ else {
     $langHex = $cultureInfo.LCID.ToString("X4")
     $layoutHex = $cultureInfo.KeyboardLayoutId.ToString("X8")
     $defaultInputTip = "$langHex`:$layoutHex"
+}
+
+if ($keyboardLayout -eq "English (United States) - US International") {
+    # en-US International keyboard layout (TIP)
+    $defaultInputTip = "0409:00020409"
 }
 
 Write-Host "Language installation: Default InputTip is $defaultInputTip"
