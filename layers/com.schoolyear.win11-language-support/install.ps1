@@ -1,12 +1,18 @@
 Param (
   [Parameter(Mandatory)]
-  [ValidateSet("Arabic (Saudi Arabia)", "Bulgarian (Bulgaria)", "Chinese (Simplified, China)", "Chinese (Traditional, Taiwan)", "Croatian (Croatia)", "Czech (Czech Republic)", "Danish (Denmark)", "Dutch (Netherlands)", "English (United Kingdom)", "Estonian (Estonia)", "Finnish (Finland)", "French (Canada)", "French (France)", "German (Germany)", "Greek (Greece)", "Hebrew (Israel)", "Hungarian (Hungary)", "Italian (Italy)", "Japanese (Japan)", "Korean (Korea)", "Latvian (Latvia)", "Lithuanian (Lithuania)", "Norwegian, BokmÃ¥l (Norway)", "Polish (Poland)", "Portuguese (Brazil)", "Portuguese (Portugal)", "Romanian (Romania)", "Russian (Russia)", "Serbian (Latin, Serbia)", "Slovak (Slovakia)", "Slovenian (Slovenia)", "Spanish (Mexico)", "Spanish (Spain)", "Swedish (Sweden)", "Thai (Thailand)", "Turkish (Turkey)", "Ukrainian (Ukraine)", "English (Australia)", "Keep current language (no change)")]
   [string]$a_windowsLanguage,
+
+  [Parameter()]
+  [ValidateSet("Default for language", "English (United States) - US International")]
+  [string]$b_keyboardLayout = "Default for language",
 
   # Controls whether the extra Office login prompt fix should run
   [Parameter()]
   [ValidateSet("yes", "no")]
-  [string]$c_removeExtraOfficeLogin
+  [string]$c_removeExtraOfficeLogin,
+
+  [Parameter(ValueFromRemainingArguments)]
+  [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
 )
 # Issues: parameters & keyboard lay-out & location sso fix
 
