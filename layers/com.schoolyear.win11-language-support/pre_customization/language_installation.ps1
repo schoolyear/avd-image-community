@@ -131,6 +131,28 @@ $UserLanguageList += $OldList | where { $_.LanguageTag -ne $inputlocale }
 $UserLanguageList | select LanguageTag
 Set-WinUserLanguageList -LanguageList $UserLanguageList -Force
 
+# Ensure keyboard/input default follows the target language instead of a prior fallback (for example en-US)
+Write-Host "Language installation: Setting WinDefaultInputMethodOverride"
+$AppliedList = Get-WinUserLanguageList
+$PrimaryEntry = $AppliedList | Where-Object { $_.LanguageTag -eq $inputlocale } | Select-Object -First 1
+$defaultInputTip = $null
+
+if ($null -ne $PrimaryEntry -and $null -ne $PrimaryEntry.InputMethodTips -and $PrimaryEntry.InputMethodTips.Count -gt 0) {
+    $defaultInputTip = $PrimaryEntry.InputMethodTips[0]
+}
+else {
+    # Fallback: derive a keyboard TIP from locale metadata if InputMethodTips is not populated yet
+    $cultureInfo = [System.Globalization.CultureInfo]::GetCultureInfo($inputlocale)
+    $langHex = $cultureInfo.LCID.ToString("X4")
+    $layoutHex = $cultureInfo.KeyboardLayoutId.ToString("X8")
+    $defaultInputTip = "$langHex`:$layoutHex"
+}
+
+Write-Host "Language installation: Default InputTip is $defaultInputTip"
+Set-WinDefaultInputMethodOverride -InputTip $defaultInputTip
+$currentInputOverride = Get-WinDefaultInputMethodOverride
+Write-Host "Language installation: WinDefaultInputMethodOverride is $($currentInputOverride.InputTip)"
+
 # Set Culture, sets the user culture for the current user account.
 Write-Host "Language installation: Setting culture $inputlocale"
 Set-Culture -CultureInfo $inputlocale
