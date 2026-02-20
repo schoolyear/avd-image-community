@@ -1,19 +1,8 @@
-# <CAN BE REMOVED>
-# This script is executed during the preparation of the exam image
-# This script is executed before the sysprep step
-#
-# This script is executed in its own layer folder
-# So, any file in this image layer, is available in the current working directory
-#
-# Once all installation scripts are executed, all image layer files are deleted
-# If you want to persist a file in the image, you must copy it to another folder
-# </CAN BE REMOVED>
-
 Param (
-    # Controls whether the Office privacy scheduled task should be created
+    # Controls whether the "Your Privacy Matters pop-up is removed"
     [Parameter()]
-    [ValidateSet("on", "off")]
-    [string]$officePrivacyTask = "on",
+    [ValidateSet("yes", "no")]
+    [string]$removesPrivacyPopup,
 
     # You can configure your own parameter in the properties.json5 file
     [Parameter(ValueFromRemainingArguments)]
@@ -30,23 +19,21 @@ Set-StrictMode -Version Latest
 # This makes the downloads considerably faster
 $ProgressPreference = 'SilentlyContinue'
 
-# install.ps1
-# Creates a scheduled task that runs at *user logon* (i.e., in the user's context)
+# The script creates a scheduled task that runs at *user logon* (i.e., in the user's context)
 # and sets: HKCU\Software\Microsoft\Office\16.0\Common\PrivacyDialogsDisabled=1
 
-if ($officePrivacyTask -eq "off") {
-  Write-Host "[OfficePrivacyTask] Skipping scheduled task creation because officePrivacyTask=off"
+#Skips this script if the parameter is set to "no"
+if ($removesPrivacyPopup -eq "no") {
+  Write-Host "[removesPrivacyPopup] Skipping scheduled task creation because removesPrivacyPopup=off"
   exit 0
 }
 
-$TaskName = "SY-OfficePrivacyDialogsOnLogon"
+$TaskName = "SY-OfficePrivacyDialogRemoval"
 $TaskPath = "\Schoolyear\"
 
-Write-Host "[OfficePrivacyTask] Creating scheduled task: $TaskPath$TaskName"
+Write-Host "[removesPrivacyPopup] Creating scheduled task: $TaskPath$TaskName"
 
-# Run for the logged-on user (HKCU will be that user)
 $Command = 'reg.exe add "HKCU\Software\Microsoft\Office\16.0\Common" /v PrivacyDialogsDisabled /t REG_DWORD /d 1 /f'
-
 $Action    = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c $Command"
 $Trigger   = New-ScheduledTaskTrigger -AtLogOn
 $Principal = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Users" -RunLevel Limited
@@ -60,7 +47,7 @@ Register-ScheduledTask `
   -Principal $Principal `
   -Settings $Settings | Out-Null
 
-Write-Host "[OfficePrivacyTask] Scheduled task created."
-Write-Host "[OfficePrivacyTask] Will run at logon in the user's context."
+Write-Host "[removesPrivacyPopup] Scheduled task created."
+Write-Host "[removesPrivacyPopup] Will run at logon in the user's context."
 
 

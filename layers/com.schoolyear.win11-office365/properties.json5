@@ -24,7 +24,7 @@
   },
   build_parameters: {
     officePrivacyTask: {
-      description: "Toggle creation of the Office privacy scheduled task",
+      description: "Do you want to remove the 'Your Privacy Matters' Office pop-up?",
       enum: ["on", "off"],
       default: "on"
     }
