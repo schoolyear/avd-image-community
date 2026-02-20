@@ -143,5 +143,7 @@ Set-WinHomeLocation -GeoId $geoId
 Write-Host "Language installation: Copy UserInternationalSettingsToSystem"
 Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
 
-Exit 0
+# A restart is performed after all normal layers. So this script does not require one.
+
+# Exit 0
 
