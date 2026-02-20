@@ -23,7 +23,7 @@
     ],
   },
   build_parameters: {
-    officePrivacyTask: {
+    removesPrivacyPopup: {
       description: "Do you want to remove the 'Your Privacy Matters' Office pop-up?",
       enum: ["yes", "no"],
       default: "yes"
