@@ -150,7 +150,16 @@ else {
 
 if ($keyboardLayout -eq "English (United States) - US International") {
     # Override keyboard only, while keeping a minimal language list
-    $UserLanguageList[0].InputMethodTips = @("0409:00020409")
+    $targetTip = "0409:00020409"
+    $tips = $UserLanguageList[0].InputMethodTips
+    if ($null -eq $tips) {
+        Throw "InputMethodTips collection is not available for primary language entry."
+    }
+
+    while ($tips.Count -gt 0) {
+        $tips.RemoveAt(0)
+    }
+    $null = $tips.Add($targetTip)
 }
 
 $UserLanguageList | Select-Object LanguageTag, InputMethodTips

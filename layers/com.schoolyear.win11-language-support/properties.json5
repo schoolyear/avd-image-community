@@ -9,7 +9,7 @@
   },
   platform_version: "2",
   build_parameters: {
-    windowsLanguage: {
+    a_windowsLanguage: {
       description: "Set the language of windows",
       enum: [
         "Arabic (Saudi Arabia)",
@@ -54,12 +54,12 @@
       ],
       default: "Keep current language (no change)"
     },
-    keyboardLayout: {
+    b_keyboardLayout: {
       description: "Choose keyboard layout behavior",
       enum: ["Default for language", "English (United States) - US International"],
       default: "Default for language"
     },
-    removeExtraOfficeLogin: {
+    c_removeExtraOfficeLogin: {
       description: "Do you want to remove the extra Office login prompt? (Digital Market Acts interrupts SSO)",
       enum: ["yes", "no"],
       default: "yes"
@@ -79,10 +79,10 @@
     "Write-Host \"[LanguageSupport] Checking build_parameters.json\"",
     "if (!(Test-Path \"C:\\image_bundle\\build_parameters.json\")) { throw \"build_parameters.json not found\" }",
 
-    "$windowsLanguage = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language-support'.windowsLanguage.value)",
+    "$windowsLanguage = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language-support'.a_windowsLanguage.value)",
     "if ([string]::IsNullOrEmpty($windowsLanguage)) { throw \"windowsLanguage cannot be empty\" }",
     "Write-Host \"[LanguageSupport] Selected language: $windowsLanguage\"",
-    "$keyboardLayout = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language-support'.keyboardLayout.value)",
+    "$keyboardLayout = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language-support'.b_keyboardLayout.value)",
     "if ([string]::IsNullOrWhiteSpace($keyboardLayout)) { $keyboardLayout = 'Default for language' }",
     "Write-Host \"[LanguageSupport] Selected keyboard layout option: $keyboardLayout\"",
 
