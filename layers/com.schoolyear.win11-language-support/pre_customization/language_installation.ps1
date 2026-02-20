@@ -143,14 +143,17 @@ else {
 Write-Host "Language installation: Setting WinUserLanguageList"
 if ($keepCurrentLanguage) {
     $UserLanguageList = Get-WinUserLanguageList
+    Write-Host "Language installation: keep-current mode, using existing language list"
 }
 else {
     $UserLanguageList = New-WinUserLanguageList -Language $inputlocale
+    Write-Host "Language installation: minimal list mode, created list with primary language $inputlocale"
 }
 
 if ($keyboardLayout -eq "English (United States) - US International") {
     # Override keyboard only, while keeping a minimal language list
     $targetTip = "0409:00020409"
+    Write-Host "Language installation: Applying keyboard override InputMethodTip $targetTip"
     $tips = $UserLanguageList[0].InputMethodTips
     if ($null -eq $tips) {
         Throw "InputMethodTips collection is not available for primary language entry."
@@ -160,10 +163,15 @@ if ($keyboardLayout -eq "English (United States) - US International") {
         $tips.RemoveAt(0)
     }
     $null = $tips.Add($targetTip)
+    Write-Host "Language installation: Keyboard override applied to primary language entry"
+}
+else {
+    Write-Host "Language installation: No keyboard override requested, keeping default input method tips"
 }
 
 $UserLanguageList | Select-Object LanguageTag, InputMethodTips
 Set-WinUserLanguageList -LanguageList $UserLanguageList -Force
+Write-Host "Language installation: WinUserLanguageList applied"
 
 if (-not $keepCurrentLanguage) {
     # Set Culture, sets the user culture for the current user account.
