@@ -181,12 +181,11 @@ if (-not $keepCurrentLanguage) {
     # Set Win Home Location, sets the home location setting for the current user
     Write-Host "Language installation: Setting WinHomeLocation $geoId"
     Set-WinHomeLocation -GeoId $geoId
-
-    # Copy User International Settings from current user to System, including Welcome screen and new user
-    Write-Host "Language installation: Copy UserInternationalSettingsToSystem"
-    Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
 }
 
+# Copy User International Settings from current user to System, including Welcome screen and new user
+Write-Host "Language installation: Copy UserInternationalSettingsToSystem"
+Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
 # A restart is performed after all normal layers. So this script does not require one.
 
 # Exit 0
