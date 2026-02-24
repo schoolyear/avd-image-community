@@ -2,10 +2,6 @@ Param (
   [Parameter(Mandatory)]
   [string]$a_windowsLanguage,
 
-  [Parameter()]
-  [ValidateSet("Default for language", "English (United States) - US International")]
-  [string]$b_keyboardLayout = "Default for language",
-
   # Controls whether the extra Office login prompt fix should run
   [Parameter()]
   [ValidateSet("yes", "no")]
@@ -14,7 +10,6 @@ Param (
   [Parameter(ValueFromRemainingArguments)]
   [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
 )
-# Issues: parameters & keyboard lay-out & location sso fix
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest

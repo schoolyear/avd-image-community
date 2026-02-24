@@ -1,9 +1,6 @@
 Param (
     [Parameter(Mandatory = $true)]
-    [string]$windowsLanguage,
-    [Parameter(Mandatory = $false)]
-    [ValidateSet("Default for language", "English (United States) - US International")]
-    [string]$keyboardLayout = "Default for language"
+    [string]$windowsLanguage
 )
 
 $ProgressPreference = 'SilentlyContinue'
@@ -98,17 +95,14 @@ if ($keepCurrentLanguage) {
         Throw "No existing user language list found while keep-current mode was requested."
     }
 
-    $inputlocale = $currentLanguageList[0].LanguageTag
+    $LPlanguage = $currentLanguageList[0].LanguageTag
     $geoId = (Get-WinHomeLocation).GeoId
-    Write-Host "Language installation: current input locale is $inputlocale "
+    Write-Host "Language installation: current input locale is $LPlanguage"
     Write-Host "Language installation: current Geo id is $geoId "
 }
 else {
     $LPlanguage = $LanguagesDictionary[$windowsLanguage].Culture
     Write-Host "Language installation: Language tag is $LPlanguage "
-    # As In some countries the input locale might differ from the installed language pack language, we use a separate input local variable.
-    $inputlocale = $LanguagesDictionary[$windowsLanguage].Culture
-    Write-Host "Language installation: input locale is $inputlocale "
 
     $geoId = $LanguagesDictionary[$windowsLanguage].GeoId
     Write-Host "Language installation: Geo id is $geoId "
@@ -130,53 +124,30 @@ else {
     }
 
     #Set System Preferred UI Language
-    Write-Host "Language installation: Setting SystemPreferredUILanguage $inputlocale"
-    Set-SystemPreferredUILanguage $inputlocale
+    Write-Host "Language installation: Setting SystemPreferredUILanguage $LPlanguage"
+    Set-SystemPreferredUILanguage $LPlanguage
 
     # Configure new language defaults under current user (system) after which it can be copied to system
     #Set Win UI Language Override for regional changes
-    Write-Host "Language installation: Setting WinUILanguageOverride $inputlocale"
-    Set-WinUILanguageOverride -Language $inputlocale
+    Write-Host "Language installation: Setting WinUILanguageOverride $LPlanguage"
+    Set-WinUILanguageOverride -Language $LPlanguage
 }
 
 # Set Win User Language List, sets the current user language settings
 Write-Host "Language installation: Setting WinUserLanguageList"
 if ($keepCurrentLanguage) {
     $UserLanguageList = Get-WinUserLanguageList
-    Write-Host "Language installation: keep-current mode, using existing language list"
+    Write-Host "Language installation: keep-current, using existing language list"
 }
 else {
-    $UserLanguageList = New-WinUserLanguageList -Language $inputlocale
-    Write-Host "Language installation: minimal list mode, created list with primary language $inputlocale"
+    $UserLanguageList = New-WinUserLanguageList -Language $LPlanguage
+    Write-Host "Language installation: minimal list mode, created list with primary language $LPlanguage"
 }
-
-if ($keyboardLayout -eq "English (United States) - US International") {
-    # Override keyboard only, while keeping a minimal language list
-    $targetTip = "0409:00020409"
-    Write-Host "Language installation: Applying keyboard override InputMethodTip $targetTip"
-    $tips = $UserLanguageList[0].InputMethodTips
-    if ($null -eq $tips) {
-        Throw "InputMethodTips collection is not available for primary language entry."
-    }
-
-    while ($tips.Count -gt 0) {
-        $tips.RemoveAt(0)
-    }
-    $null = $tips.Add($targetTip)
-    Write-Host "Language installation: Keyboard override applied to primary language entry"
-}
-else {
-    Write-Host "Language installation: No keyboard override requested, keeping default input method tips"
-}
-
-$UserLanguageList | Select-Object LanguageTag, InputMethodTips
-Set-WinUserLanguageList -LanguageList $UserLanguageList -Force
-Write-Host "Language installation: WinUserLanguageList applied"
 
 if (-not $keepCurrentLanguage) {
     # Set Culture, sets the user culture for the current user account.
-    Write-Host "Language installation: Setting culture $inputlocale"
-    Set-Culture -CultureInfo $inputlocale
+    Write-Host "Language installation: Setting culture $LPlanguage"
+    Set-Culture -CultureInfo $LPlanguage
 
     # Set Win Home Location, sets the home location setting for the current user
     Write-Host "Language installation: Setting WinHomeLocation $geoId"
