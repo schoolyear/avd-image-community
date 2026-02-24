@@ -61,7 +61,19 @@
     }
   },
   customizers: {
-    pre: [
+    pre: [      
+{
+        type: "WindowsUpdate",
+        name: "WindowsUpdateFirstRunLanguagePack"
+},
+{
+        type: "WindowsUpdate",
+        name: "WindowsUpdateSecondRunLanguagePack"
+},
+{
+        type: "WindowsRestart",
+        name: "LanguagePackPreInstallWindowsRestart"
+},
 {
   type: "PowerShell",
   name: "CONF_InstallLanguagePacks",
