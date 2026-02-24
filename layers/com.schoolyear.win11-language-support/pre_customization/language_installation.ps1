@@ -86,7 +86,6 @@ If ($ENV:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
 Write-Host "Language installation: setting variables"
 
 $keepCurrentLanguage = $windowsLanguage -eq "Keep current language (no change)"
-Write-Host "Language installation: keyboard layout option is $keyboardLayout "
 
 if ($keepCurrentLanguage) {
     Write-Host "Language installation: Keeping current language settings"
@@ -131,17 +130,6 @@ else {
     #Set Win UI Language Override for regional changes
     Write-Host "Language installation: Setting WinUILanguageOverride $LPlanguage"
     Set-WinUILanguageOverride -Language $LPlanguage
-}
-
-# Set Win User Language List, sets the current user language settings
-Write-Host "Language installation: Setting WinUserLanguageList"
-if ($keepCurrentLanguage) {
-    $UserLanguageList = Get-WinUserLanguageList
-    Write-Host "Language installation: keep-current, using existing language list"
-}
-else {
-    $UserLanguageList = New-WinUserLanguageList -Language $LPlanguage
-    Write-Host "Language installation: minimal list mode, created list with primary language $LPlanguage"
 }
 
 if (-not $keepCurrentLanguage) {
