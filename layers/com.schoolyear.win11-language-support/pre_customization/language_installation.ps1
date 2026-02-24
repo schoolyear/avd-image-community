@@ -15,7 +15,6 @@ $LanguagesDictionary = @{
     "Czech (Czech Republic)"               = @{ Culture = "cs-CZ"; GeoId = 75 }
     "Danish (Denmark)"                    = @{ Culture = "da-DK"; GeoId = 61 }
     "Dutch (Netherlands)"                 = @{ Culture = "nl-NL"; GeoId = 176 }
-    "English (United States)"              = @{ Culture = "en-US"; GeoId = 244 }
     "English (United Kingdom)"             = @{ Culture = "en-GB"; GeoId = 242 }
     "English (Australia)"                  = @{ Culture = "en-AU"; GeoId = 12 }
     "Estonian (Estonia)"                   = @{ Culture = "et-EE"; GeoId = 70 }
@@ -26,7 +25,6 @@ $LanguagesDictionary = @{
     "Greek (Greece)"                      = @{ Culture = "el-GR"; GeoId = 98 }
     "Hebrew (Israel)"                     = @{ Culture = "he-IL"; GeoId = 117 }
     "Hungarian (Hungary)"                 = @{ Culture = "hu-HU"; GeoId = 109 }
-    "Indonesian (Indonesia)"              = @{ Culture = "id-ID"; GeoId = 111 }
     "Italian (Italy)"                     = @{ Culture = "it-IT"; GeoId = 118 }
     "Japanese (Japan)"                    = @{ Culture = "ja-JP"; GeoId = 122 }
     "Korean (Korea)"                      = @{ Culture = "ko-KR"; GeoId = 134 }
