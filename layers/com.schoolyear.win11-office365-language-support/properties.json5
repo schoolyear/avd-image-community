@@ -27,7 +27,7 @@
     ],
   },
   build_parameters: {
-        windowsLanguage: {
+    windowsLanguage: {
       description: "Set the language of windows",
       enum: [
         "Arabic (Saudi Arabia)",
@@ -71,6 +71,11 @@
         "English (United States)"
       ],
       default: "English (United States)"
+    },
+    removesPrivacyPopup: {
+      description: "Do you want to remove the 'Your Privacy Matters' Office first run pop-up?",
+      enum: ["yes", "no"],
+      default: "yes"
     }
      }
 }

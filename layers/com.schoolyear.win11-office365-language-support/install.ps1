@@ -1,7 +1,11 @@
 Param (
   [Parameter(Mandatory)]
   [ValidateSet("Arabic (Saudi Arabia)", "Bulgarian (Bulgaria)", "Chinese (Simplified, China)", "Chinese (Traditional, Taiwan)", "Croatian (Croatia)", "Czech (Czech Republic)", "Danish (Denmark)", "Dutch (Netherlands)", "English (United Kingdom)", "Estonian (Estonia)", "Finnish (Finland)", "French (Canada)", "French (France)", "German (Germany)", "Greek (Greece)", "Hebrew (Israel)", "Hungarian (Hungary)", "Italian (Italy)", "Japanese (Japan)", "Korean (Korea)", "Latvian (Latvia)", "Lithuanian (Lithuania)", "Norwegian, Bokmål (Norway)", "Polish (Poland)", "Portuguese (Brazil)", "Portuguese (Portugal)", "Romanian (Romania)", "Russian (Russia)", "Serbian (Latin, Serbia)", "Slovak (Slovakia)", "Slovenian (Slovenia)", "Spanish (Mexico)", "Spanish (Spain)", "Swedish (Sweden)", "Thai (Thailand)", "Turkish (Turkey)", "Ukrainian (Ukraine)", "English (Australia)", "English (United States)")]
-  [string]$windowsLanguage
+  [string]$windowsLanguage,
+
+  [Parameter()]
+  [ValidateSet("yes", "no")]
+  [string]$removesPrivacyPopup
 )
 
 # Recommended snippet to make sure PowerShell stops execution on failure
@@ -21,3 +25,9 @@ Write-Host "=== Done with changing configuration file ==="
 Write-Host "=== Change office configuration ==="
 & .\install_scripts\office_language.ps1
 Write-Host "=== Done with changing configuration file ==="
+
+if ($removesPrivacyPopup -eq "yes") {
+  Write-Host "=== Removes 'Your Privacy Matters' pop-up ==="
+  & .\install_scripts\remove_privacy_pop_up.ps1
+  Write-Host "=== Done with changing configuration file ==="
+}
