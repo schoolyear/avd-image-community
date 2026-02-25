@@ -73,6 +73,7 @@ function Write-TaskbarSwitcherKeyboardLayoutsToRegistry {
     $keyboardLayoutsKeyPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layouts'
     $targetKeyPath = 'HKLM:\SOFTWARE\SchoolyearAVD\LanguageSupport'
 
+    # TODO: Validate this captures the exact keyboard layouts shown in the user's taskbar language switcher in all build scenarios. Also, check how to implement functionality.
     $languageList = Get-WinUserLanguageList -ErrorAction Stop
     if ($null -eq $languageList -or $languageList.Count -eq 0) {
         Write-Warning "Language installation: No user language list found when capturing taskbar switcher keyboard layouts"
