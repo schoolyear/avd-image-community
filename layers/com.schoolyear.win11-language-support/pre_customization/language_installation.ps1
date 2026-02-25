@@ -80,6 +80,67 @@ If ($ENV:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
     Exit
 }
 
+function Write-TaskbarSwitcherKeyboardLayoutsToRegistry {
+    $keyboardLayoutsKeyPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layouts'
+    $targetKeyPath = 'HKLM:\SOFTWARE\Schoolyear\LanguageSupport'
+
+    # TODO: Remove this try/catch once we want registry-write failures to fail the script.
+    try {
+        $languageList = Get-WinUserLanguageList -ErrorAction Stop
+        if ($null -eq $languageList -or $languageList.Count -eq 0) {
+            Write-Warning "Language installation: No user language list found when capturing taskbar switcher keyboard layouts"
+            return
+        }
+
+        $switcherEntries = New-Object System.Collections.Generic.List[string]
+
+        foreach ($language in $languageList) {
+            $languageTag = $language.LanguageTag
+            $inputMethodTips = @($language.InputMethodTips)
+
+            if ($inputMethodTips.Count -eq 0) {
+                $switcherEntries.Add(('{0} | (no InputMethodTips)' -f $languageTag))
+                continue
+            }
+
+            foreach ($tip in $inputMethodTips) {
+                $keyboardName = $null
+
+                if ($tip -match '^[0-9A-Fa-f]{4}:(?<KeyboardLayoutId>[0-9A-Fa-f]{8})$') {
+                    $keyboardLayoutId = $Matches['KeyboardLayoutId']
+                    $layoutRegistryPath = Join-Path $keyboardLayoutsKeyPath $keyboardLayoutId
+
+                    try {
+                        $layoutItem = Get-ItemProperty -Path $layoutRegistryPath -ErrorAction Stop
+                        $keyboardName = $layoutItem.'Layout Text'
+                    }
+                    catch {
+                        $keyboardName = $null
+                    }
+                }
+
+                if ([string]::IsNullOrWhiteSpace($keyboardName)) {
+                    $switcherEntries.Add(('{0} | {1}' -f $languageTag, $tip))
+                }
+                else {
+                    $switcherEntries.Add(('{0} | {1} | {2}' -f $languageTag, $tip, $keyboardName))
+                }
+            }
+        }
+
+        $uniqueEntries = $switcherEntries | Sort-Object -Unique
+
+        New-Item -Path $targetKeyPath -Force | Out-Null
+        New-ItemProperty -Path $targetKeyPath -Name 'TaskbarSwitcherKeyboardLayouts' -PropertyType MultiString -Value $uniqueEntries -Force | Out-Null
+        New-ItemProperty -Path $targetKeyPath -Name 'TaskbarSwitcherKeyboardLayoutsCount' -PropertyType DWord -Value @($uniqueEntries).Count -Force | Out-Null
+
+        Write-Host "Language installation: Wrote $(@($uniqueEntries).Count) taskbar switcher keyboard layout entries to $targetKeyPath"
+    }
+    catch {
+        Write-Warning "Language installation: Failed to capture taskbar switcher keyboard layouts. Message=$($_.Exception.Message)"
+    }
+}
+
 #Set variables (change to your needs):
 Write-Host "Language installation: setting variables"
 
@@ -106,27 +167,14 @@ else {
 
     #Install language pack and change the language of the OS on different places
     #Install an additional language pack including FODs
-    Write-Host "Language installation: Installing languagepack"
-    #Install language pack and change the language of the OS on different places
-    #Install an additional language pack including FODs
+    Write-Host "Language installation: Starting 10 min sleep before installing LP"
+    
+
+    Start-Sleep -Seconds 660
     Write-Host "Language installation: Installing languagepack"
 
-    $repairSteps = @(
-        @{
-            Name = "DISM ScanHealth"
-            Action = { & dism.exe /Online /Cleanup-Image /ScanHealth }
-        },
-        @{
-            Name = "DISM RestoreHealth"
-            Action = { & dism.exe /Online /Cleanup-Image /RestoreHealth }
-        },
-        @{
-            Name = "SFC scan"
-            Action = { & sfc.exe /scannow }
-        }
-    )
-
-    $maxAttempts = $repairSteps.Count + 1
+    $transientRetryCount = 8
+    $maxAttempts = 1 + $transientRetryCount
     $delaySeconds = 90
     $installed = $false
 
@@ -147,9 +195,9 @@ else {
             Write-Warning "Language installation: Install-Language failed on attempt $attempt/$maxAttempts. HResult=$hresultText Message=$($_.Exception.Message)"
 
             if ($attempt -lt $maxAttempts) {
-                $repairStep = $repairSteps[$attempt - 1]
-                Write-Host "Language installation: Running repair step before retry: $($repairStep.Name)"
-                & $repairStep.Action
+                $nextAttempt = $attempt + 1
+                $transientRetryIndex = $nextAttempt - 1
+                Write-Host "Language installation: Retry $transientRetryIndex/$transientRetryCount"
 
                 Write-Host "Language installation: Waiting $delaySeconds seconds before retry"
                 Start-Sleep -Seconds $delaySeconds
@@ -199,6 +247,7 @@ if (-not $keepCurrentLanguage) {
 # Copy User International Settings from current user to System, including Welcome screen and new user
 Write-Host "Language installation: Copy UserInternationalSettingsToSystem"
 Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
+Write-TaskbarSwitcherKeyboardLayoutsToRegistry
 # A restart is performed after all normal layers. So this script does not require one.
 
 # Exit 0
