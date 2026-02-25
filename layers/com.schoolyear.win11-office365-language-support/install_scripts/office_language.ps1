@@ -16,7 +16,5 @@ Write-Host "*** AVD AIB CUSTOMIZER PHASE : Configure Office language command: $c
 $configureProcess = Start-Process -FilePath $configureExe -ArgumentList $configureArgs -Wait -PassThru -NoNewWindow
 Write-Host "*** AVD AIB CUSTOMIZER PHASE : Configure Office language exit code: $($configureProcess.ExitCode) ***"
 
-Write-Host "*** AVD AIB CUSTOMIZER PHASE : Start-Process $configureExe $configureArgs ***"
-
 Write-Host "*** AVD AIB CUSTOMIZER PHASE : Set Office Language completed ***"
 

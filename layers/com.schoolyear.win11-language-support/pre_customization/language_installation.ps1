@@ -154,11 +154,8 @@ else {
     $geoId = $LanguagesDictionary[$windowsLanguage].GeoId
     Write-Host "Language installation: Geo id is $geoId "
 
-    #Install language pack and change the language of the OS on different places
-    #Install an additional language pack including FODs
-    Write-Host "Language installation: Starting 10 min sleep before installing LP"
-    
-
+    # Install an additional language pack including FODs after a delay to allow earlier updates to settle.
+    Write-Host "Language installation: Starting 10-minute wait before installing language pack"
     Start-Sleep -Seconds 660
     Write-Host "Language installation: Installing languagepack"
 
