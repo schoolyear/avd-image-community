@@ -69,17 +69,6 @@ $LanguagesDictionary = @{
 # The script was adapted to fit Schoolyear AVD and allow for parameters to change to 'any' language.           #
 #------------------------------------------------------------------------------------------------------------- #
 
-# Microsoft Intune Management Extension might start a 32-bit PowerShell instance. If so, restart as 64-bit PowerShell
-If ($ENV:PROCESSOR_ARCHITEW6432 -eq "AMD64") {
-    Try {
-        &"$ENV:WINDIR\SysNative\WindowsPowershell\v1.0\PowerShell.exe" -File $PSCOMMANDPATH
-    }
-    Catch {
-        Throw "Failed to start $PSCOMMANDPATH"
-    }
-    Exit
-}
-
 function Write-TaskbarSwitcherKeyboardLayoutsToRegistry {
     $keyboardLayoutsKeyPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layouts'
     $targetKeyPath = 'HKLM:\SOFTWARE\Schoolyear\LanguageSupport'
