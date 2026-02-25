@@ -24,7 +24,7 @@ $ProgressPreference = 'SilentlyContinue'
 
 #Skips this script if the parameter is set to "no"
 if ($removesPrivacyPopup -eq "no") {
-  Write-Host "[removesPrivacyPopup] Skipping scheduled task creation because removesPrivacyPopup=no"
+  Write-Host "[removesPrivacyPopup] Skipping script because removesPrivacyPopup=no"
   exit 0
 }
 
