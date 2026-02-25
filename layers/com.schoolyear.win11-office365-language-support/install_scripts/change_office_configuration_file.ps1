@@ -1,6 +1,6 @@
 Param (
     [Parameter(Mandatory = $true)]
-    [string]$windowsLanguage
+    [string]$officeAppsLanguage
 )
 
 $ProgressPreference = 'SilentlyContinue'
@@ -54,7 +54,7 @@ $LanguagesDictionary = @{
 
 Write-Host "Change Office configuration file: setting variable"
 
-$odtLang = $LanguagesDictionary[$windowsLanguage].Culture.ToLowerInvariant()
+$odtLang = $LanguagesDictionary[$officeAppsLanguage].Culture.ToLowerInvariant()
 
 Write-Host "Change Office configuration file: odtLang is $odtLang "
 $TemplateXmlPath = ".\resources\M365OfficeTemplate.xml"

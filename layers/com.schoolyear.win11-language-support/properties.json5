@@ -9,8 +9,8 @@
   },
   platform_version: "2",
   build_parameters: {
-    a_windowsLanguage: {
-      description: "Set the language of windows",
+    windowsDisplayLanguage: {
+      description: "Set the Windows display and input language",
       enum: [
         "Arabic (Saudi Arabia)",
         "Bulgarian (Bulgaria)",
@@ -54,8 +54,8 @@
       ],
       default: "Keep current language (no change)"
     },
-    c_removeExtraOfficeLogin: {
-      description: "Do you want to remove the extra Office login prompt? (Digital Market Acts interrupts SSO)",
+    removeExtraOfficeLoginPrompt: {
+      description: "Remove the extra Office login prompt? (Digital Market Acts interrupts SSO)",
       enum: ["yes", "no"],
       default: "yes"
     }
@@ -86,7 +86,7 @@
     "Write-Host \"[LanguageSupport] Checking build_parameters.json\"",
     "if (!(Test-Path \"C:\\image_bundle\\build_parameters.json\")) { throw \"build_parameters.json not found\" }",
 
-    "$windowsLanguage = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language-support'.a_windowsLanguage.value)",
+    "$windowsLanguage = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language-support'.windowsDisplayLanguage.value)",
     "if ([string]::IsNullOrEmpty($windowsLanguage)) { throw \"windowsLanguage cannot be empty\" }",
     "Write-Host \"[LanguageSupport] Selected language: $windowsLanguage\"",
 

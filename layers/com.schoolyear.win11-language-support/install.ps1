@@ -1,11 +1,11 @@
 Param (
   [Parameter(Mandatory)]
-  [string]$a_windowsLanguage,
+  [string]$windowsDisplayLanguage,
 
   # Controls whether the extra Office login prompt fix should run
   [Parameter()]
   [ValidateSet("yes", "no")]
-  [string]$c_removeExtraOfficeLogin,
+  [string]$removeExtraOfficeLoginPrompt,
 
   [Parameter(ValueFromRemainingArguments)]
   [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
@@ -15,8 +15,8 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 $ProgressPreference = 'SilentlyContinue'
 
-if ($c_removeExtraOfficeLogin -eq "no") {
-  Write-Host "=== Skipping extra Office login screen fix because c_removeExtraOfficeLogin=no ==="
+if ($removeExtraOfficeLoginPrompt -eq "no") {
+  Write-Host "=== Skipping extra Office login screen fix because removeExtraOfficeLoginPrompt=no ==="
 }
 else {
   Write-Host "=== Remove extra login screen for Office ==="

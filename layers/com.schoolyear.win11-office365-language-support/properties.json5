@@ -27,8 +27,8 @@
     ],
   },
   build_parameters: {
-    windowsLanguage: {
-      description: "Set the language of windows",
+    officeAppsLanguage: {
+      description: "Set the Microsoft 365 apps language",
       enum: [
         "Arabic (Saudi Arabia)",
         "Bulgarian (Bulgaria)",
@@ -72,8 +72,8 @@
       ],
       default: "English (United States)"
     },
-    removesPrivacyPopup: {
-      description: "Do you want to remove the 'Your Privacy Matters' Office first run pop-up?",
+    removeOfficePrivacyPopup: {
+      description: "Remove the 'Your Privacy Matters' Office first-run pop-up?",
       enum: ["yes", "no"],
       default: "yes"
     }
