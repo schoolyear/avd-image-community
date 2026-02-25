@@ -24,10 +24,10 @@ Write-Host "=== Done with changing configuration file ==="
 
 Write-Host "=== Change office configuration ==="
 & .\install_scripts\office_language.ps1
-Write-Host "=== Done with changing configuration file ==="
+Write-Host "=== Done with changing office configuration ==="
 
 if ($removesPrivacyPopup -eq "yes") {
   Write-Host "=== Removes 'Your Privacy Matters' pop-up ==="
   & .\install_scripts\remove_privacy_pop_up.ps1
-  Write-Host "=== Done with changing configuration file ==="
+  Write-Host "=== Done with removing 'Your Privacy Matters' pop-up ==="
 }
