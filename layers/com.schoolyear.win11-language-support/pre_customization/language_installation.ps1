@@ -71,63 +71,57 @@ $LanguagesDictionary = @{
 
 function Write-TaskbarSwitcherKeyboardLayoutsToRegistry {
     $keyboardLayoutsKeyPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layouts'
-    $targetKeyPath = 'HKLM:\SOFTWARE\Schoolyear\LanguageSupport'
+    $targetKeyPath = 'HKLM:\SOFTWARE\SchoolyearAVD\LanguageSupport'
 
-    # TODO: Remove this try/catch once we want registry-write failures to fail the script.
-    try {
-        $languageList = Get-WinUserLanguageList -ErrorAction Stop
-        if ($null -eq $languageList -or $languageList.Count -eq 0) {
-            Write-Warning "Language installation: No user language list found when capturing taskbar switcher keyboard layouts"
-            return
+    $languageList = Get-WinUserLanguageList -ErrorAction Stop
+    if ($null -eq $languageList -or $languageList.Count -eq 0) {
+        Write-Warning "Language installation: No user language list found when capturing taskbar switcher keyboard layouts"
+        return
+    }
+
+    $switcherEntries = New-Object System.Collections.Generic.List[string]
+
+    foreach ($language in $languageList) {
+        $languageTag = $language.LanguageTag
+        $inputMethodTips = @($language.InputMethodTips)
+
+        if ($inputMethodTips.Count -eq 0) {
+            $switcherEntries.Add(('{0} | (no InputMethodTips)' -f $languageTag))
+            continue
         }
 
-        $switcherEntries = New-Object System.Collections.Generic.List[string]
+        foreach ($tip in $inputMethodTips) {
+            $keyboardName = $null
 
-        foreach ($language in $languageList) {
-            $languageTag = $language.LanguageTag
-            $inputMethodTips = @($language.InputMethodTips)
+            if ($tip -match '^[0-9A-Fa-f]{4}:(?<KeyboardLayoutId>[0-9A-Fa-f]{8})$') {
+                $keyboardLayoutId = $Matches['KeyboardLayoutId']
+                $layoutRegistryPath = Join-Path $keyboardLayoutsKeyPath $keyboardLayoutId
 
-            if ($inputMethodTips.Count -eq 0) {
-                $switcherEntries.Add(('{0} | (no InputMethodTips)' -f $languageTag))
-                continue
+                try {
+                    $layoutItem = Get-ItemProperty -Path $layoutRegistryPath -ErrorAction Stop
+                    $keyboardName = $layoutItem.'Layout Text'
+                }
+                catch {
+                    $keyboardName = $null
+                }
             }
 
-            foreach ($tip in $inputMethodTips) {
-                $keyboardName = $null
-
-                if ($tip -match '^[0-9A-Fa-f]{4}:(?<KeyboardLayoutId>[0-9A-Fa-f]{8})$') {
-                    $keyboardLayoutId = $Matches['KeyboardLayoutId']
-                    $layoutRegistryPath = Join-Path $keyboardLayoutsKeyPath $keyboardLayoutId
-
-                    try {
-                        $layoutItem = Get-ItemProperty -Path $layoutRegistryPath -ErrorAction Stop
-                        $keyboardName = $layoutItem.'Layout Text'
-                    }
-                    catch {
-                        $keyboardName = $null
-                    }
-                }
-
-                if ([string]::IsNullOrWhiteSpace($keyboardName)) {
-                    $switcherEntries.Add(('{0} | {1}' -f $languageTag, $tip))
-                }
-                else {
-                    $switcherEntries.Add(('{0} | {1} | {2}' -f $languageTag, $tip, $keyboardName))
-                }
+            if ([string]::IsNullOrWhiteSpace($keyboardName)) {
+                $switcherEntries.Add(('{0} | {1}' -f $languageTag, $tip))
+            }
+            else {
+                $switcherEntries.Add(('{0} | {1} | {2}' -f $languageTag, $tip, $keyboardName))
             }
         }
-
-        $uniqueEntries = $switcherEntries | Sort-Object -Unique
-
-        New-Item -Path $targetKeyPath -Force | Out-Null
-        New-ItemProperty -Path $targetKeyPath -Name 'TaskbarSwitcherKeyboardLayouts' -PropertyType MultiString -Value $uniqueEntries -Force | Out-Null
-        New-ItemProperty -Path $targetKeyPath -Name 'TaskbarSwitcherKeyboardLayoutsCount' -PropertyType DWord -Value @($uniqueEntries).Count -Force | Out-Null
-
-        Write-Host "Language installation: Wrote $(@($uniqueEntries).Count) taskbar switcher keyboard layout entries to $targetKeyPath"
     }
-    catch {
-        Write-Warning "Language installation: Failed to capture taskbar switcher keyboard layouts. Message=$($_.Exception.Message)"
-    }
+
+    $uniqueEntries = $switcherEntries | Sort-Object -Unique
+
+    New-Item -Path $targetKeyPath -Force | Out-Null
+    New-ItemProperty -Path $targetKeyPath -Name 'TaskbarSwitcherKeyboardLayouts' -PropertyType MultiString -Value $uniqueEntries -Force | Out-Null
+    New-ItemProperty -Path $targetKeyPath -Name 'TaskbarSwitcherKeyboardLayoutsCount' -PropertyType DWord -Value @($uniqueEntries).Count -Force | Out-Null
+
+    Write-Host "Language installation: Wrote $(@($uniqueEntries).Count) taskbar switcher keyboard layout entries to $targetKeyPath"
 }
 
 #Set variables (change to your needs):
@@ -139,7 +133,7 @@ if ($keepCurrentLanguage) {
     Write-Host "Language installation: Keeping current language settings"
     $currentLanguageList = Get-WinUserLanguageList
     if ($null -eq $currentLanguageList -or $currentLanguageList.Count -eq 0) {
-        Throw "No existing user language list found while keep-current mode was requested."
+        throw "No existing user language list found while keep-current mode was requested."
     }
 
     $LPlanguage = $currentLanguageList[0].LanguageTag
@@ -207,7 +201,7 @@ else {
     }
     else {
         Write-Host "Failure! Language $LPlanguage NOT installed"
-        Exit 1
+        exit 1
     }
 
     #Set System Preferred UI Language
