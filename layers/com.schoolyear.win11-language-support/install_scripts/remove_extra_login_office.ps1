@@ -1,7 +1,7 @@
 # As adapted from: https://call4cloud.nl/continue-to-sign-in-prompt-sso-dma/
 # and https://call4cloud.nl/fix-continue-to-sign-in-prompt-dma-sso-compliance/
 
-$downloadUrl = "https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip"  # URL to download ViVe tool
+$downloadUrl = "https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip"
 $tempPath = "C:\Temp"
 $viveToolDir = "$tempPath\ViVeTool"
 New-Item -Path $viveToolDir -ItemType Directory -Force | Out-Null
