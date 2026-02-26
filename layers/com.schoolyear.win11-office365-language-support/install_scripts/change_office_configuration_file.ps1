@@ -5,50 +5,49 @@ Param (
 
 $ProgressPreference = 'SilentlyContinue'
 
-# populate dictionary
+# Map display names to Office Deployment Tool language tags.
 $LanguagesDictionary = @{
-    "Arabic (Saudi Arabia)"               = @{ Culture = "ar-SA"; GeoId = 205 }
-    "Bulgarian (Bulgaria)"                = @{ Culture = "bg-BG"; GeoId = 35 }
-    "Chinese (Simplified, China)"          = @{ Culture = "zh-CN"; GeoId = 45 }
-    "Chinese (Traditional, Taiwan)"        = @{ Culture = "zh-TW"; GeoId = 237 }
-    "Croatian (Croatia)"                  = @{ Culture = "hr-HR"; GeoId = 108 }
-    "Czech (Czech Republic)"               = @{ Culture = "cs-CZ"; GeoId = 75 }
-    "Danish (Denmark)"                    = @{ Culture = "da-DK"; GeoId = 61 }
-    "Dutch (Netherlands)"                 = @{ Culture = "nl-NL"; GeoId = 176 }
-    "English (United Kingdom)"             = @{ Culture = "en-GB"; GeoId = 242 }
-    "English (Australia)"                  = @{ Culture = "en-AU"; GeoId = 12 }
-    "Estonian (Estonia)"                   = @{ Culture = "et-EE"; GeoId = 70 }
-    "Finnish (Finland)"                   = @{ Culture = "fi-FI"; GeoId = 77 }
-    "French (Canada)"                     = @{ Culture = "fr-CA"; GeoId = 39 }
-    "French (France)"                     = @{ Culture = "fr-FR"; GeoId = 84 }
-    "German (Germany)"                    = @{ Culture = "de-DE"; GeoId = 94 }
-    "Greek (Greece)"                      = @{ Culture = "el-GR"; GeoId = 98 }
-    "Hebrew (Israel)"                     = @{ Culture = "he-IL"; GeoId = 117 }
-    "Hungarian (Hungary)"                 = @{ Culture = "hu-HU"; GeoId = 109 }
-    "Italian (Italy)"                     = @{ Culture = "it-IT"; GeoId = 118 }
-    "Japanese (Japan)"                    = @{ Culture = "ja-JP"; GeoId = 122 }
-    "Korean (Korea)"                      = @{ Culture = "ko-KR"; GeoId = 134 }
-    "Latvian (Latvia)"                    = @{ Culture = "lv-LV"; GeoId = 140 }
-    "Lithuanian (Lithuania)"              = @{ Culture = "lt-LT"; GeoId = 141 }
-    "Norwegian, Bokmål (Norway)"           = @{ Culture = "nb-NO"; GeoId = 177 }
-    "Polish (Poland)"                     = @{ Culture = "pl-PL"; GeoId = 191 }
-    "Portuguese (Brazil)"                 = @{ Culture = "pt-BR"; GeoId = 32 }
-    "Portuguese (Portugal)"               = @{ Culture = "pt-PT"; GeoId = 193 }
-    "Romanian (Romania)"                  = @{ Culture = "ro-RO"; GeoId = 200 }
-    "Russian (Russia)"                    = @{ Culture = "ru-RU"; GeoId = 203 }
-    "Serbian (Latin, Serbia)"             = @{ Culture = "sr-Latn-RS"; GeoId = 271 }
-    "Slovak (Slovakia)"                   = @{ Culture = "sk-SK"; GeoId = 143 }
-    "Slovenian (Slovenia)"                = @{ Culture = "sl-SI"; GeoId = 212 }
-    "Spanish (Mexico)"                    = @{ Culture = "es-MX"; GeoId = 166 }
-    "Spanish (Spain)"                     = @{ Culture = "es-ES"; GeoId = 217 }
-    "Swedish (Sweden)"                    = @{ Culture = "sv-SE"; GeoId = 221 }
-    "Thai (Thailand)"                     = @{ Culture = "th-TH"; GeoId = 227 }
-    "Turkish (Turkey)"                    = @{ Culture = "tr-TR"; GeoId = 235 }
-    "Ukrainian (Ukraine)"                 = @{ Culture = "uk-UA"; GeoId = 241 }
+    "Arabic (Saudi Arabia)"          = @{ Culture = "ar-SA" }
+    "Bulgarian (Bulgaria)"           = @{ Culture = "bg-BG" }
+    "Chinese (Simplified, China)"    = @{ Culture = "zh-CN" }
+    "Chinese (Traditional, Taiwan)"  = @{ Culture = "zh-TW" }
+    "Croatian (Croatia)"             = @{ Culture = "hr-HR" }
+    "Czech (Czech Republic)"         = @{ Culture = "cs-CZ" }
+    "Danish (Denmark)"               = @{ Culture = "da-DK" }
+    "Dutch (Netherlands)"            = @{ Culture = "nl-NL" }
+    "English (United Kingdom)"       = @{ Culture = "en-GB" }
+    "English (Australia)"            = @{ Culture = "en-AU" }
+    "Estonian (Estonia)"             = @{ Culture = "et-EE" }
+    "Finnish (Finland)"              = @{ Culture = "fi-FI" }
+    "French (Canada)"                = @{ Culture = "fr-CA" }
+    "French (France)"                = @{ Culture = "fr-FR" }
+    "German (Germany)"               = @{ Culture = "de-DE" }
+    "Greek (Greece)"                 = @{ Culture = "el-GR" }
+    "Hebrew (Israel)"                = @{ Culture = "he-IL" }
+    "Hungarian (Hungary)"            = @{ Culture = "hu-HU" }
+    "Italian (Italy)"                = @{ Culture = "it-IT" }
+    "Japanese (Japan)"               = @{ Culture = "ja-JP" }
+    "Korean (Korea)"                 = @{ Culture = "ko-KR" }
+    "Latvian (Latvia)"               = @{ Culture = "lv-LV" }
+    "Lithuanian (Lithuania)"         = @{ Culture = "lt-LT" }
+    "Norwegian, Bokmål (Norway)"    = @{ Culture = "nb-NO" }
+    "Polish (Poland)"                = @{ Culture = "pl-PL" }
+    "Portuguese (Brazil)"            = @{ Culture = "pt-BR" }
+    "Portuguese (Portugal)"          = @{ Culture = "pt-PT" }
+    "Romanian (Romania)"             = @{ Culture = "ro-RO" }
+    "Russian (Russia)"               = @{ Culture = "ru-RU" }
+    "Serbian (Latin, Serbia)"        = @{ Culture = "sr-Latn-RS" }
+    "Slovak (Slovakia)"              = @{ Culture = "sk-SK" }
+    "Slovenian (Slovenia)"           = @{ Culture = "sl-SI" }
+    "Spanish (Mexico)"               = @{ Culture = "es-MX" }
+    "Spanish (Spain)"                = @{ Culture = "es-ES" }
+    "Swedish (Sweden)"               = @{ Culture = "sv-SE" }
+    "Thai (Thailand)"                = @{ Culture = "th-TH" }
+    "Turkish (Turkey)"               = @{ Culture = "tr-TR" }
+    "Ukrainian (Ukraine)"            = @{ Culture = "uk-UA" }
 }
-# Language tag can be found here: https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/available-language-packs-for-windows
-# A list of input locales can be found here: https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-input-locales-for-windows-language-packs
-# GeoID can be found here: https://learn.microsoft.com/en-us/windows/win32/intl/table-of-geographical-locations?redirectedfrom=MSDN
+# Language tags can be found here:
+# https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/available-language-packs-for-windows
 
 Write-Host "Change Office configuration file: setting variable"
 
