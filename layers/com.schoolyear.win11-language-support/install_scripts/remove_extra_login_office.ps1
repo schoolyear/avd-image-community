@@ -2,6 +2,7 @@
 # and https://call4cloud.nl/fix-continue-to-sign-in-prompt-dma-sso-compliance/
 # tool used : https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip
 
+$scriptLogPrefix = "Remove extra login office"
 $tempPath = "C:\Temp"
 $viveToolDir = "$tempPath\ViVeTool"
 $viveToolResourceDir = Join-Path (Split-Path $PSScriptRoot -Parent) "resources\ViVeTool-v0.3.4-IntelAmd"
@@ -21,16 +22,16 @@ if (-not $resourceViveToolExe) {
 $viveToolExe = Join-Path $viveToolDir "ViveTool.exe"
 Copy-Item -LiteralPath $resourceViveToolExe -Destination $viveToolExe -Force
 
-Write-Host "Using local ViVeTool resource: $resourceViveToolExe"
+Write-Host "${scriptLogPrefix}: Using local ViVeTool resource: $resourceViveToolExe"
 
 # disable features
 foreach ($featureId in $featureIds) {
-    Write-Host "Disabling feature with ID $featureId."
+    Write-Host "${scriptLogPrefix}: Disabling feature with ID $featureId"
     & $viveToolExe /disable /id:$featureId
 }
  
 # Query status of features
-foreach ($featureId in $featureIds) {  
-$queryresult = & $viveToolExe /query /id:$featureId  
-Write-Host $queryresult  
+foreach ($featureId in $featureIds) {
+    $queryresult = & $viveToolExe /query /id:$featureId
+    @($queryresult) | ForEach-Object { Write-Host "${scriptLogPrefix}: $_" }
 }

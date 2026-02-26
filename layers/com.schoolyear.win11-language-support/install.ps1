@@ -14,13 +14,14 @@ Param (
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 $ProgressPreference = 'SilentlyContinue'
+$scriptLogPrefix = "Language support install"
 
 if ($removeExtraOfficeLoginPrompt -eq "no") {
-  Write-Host "=== Skipping extra Office login screen fix because removeExtraOfficeLoginPrompt=no ==="
+  Write-Host "${scriptLogPrefix}: Skipping extra Office login screen fix because removeExtraOfficeLoginPrompt=no"
 }
 else {
-  Write-Host "=== Remove extra login screen for Office ==="
+  Write-Host "${scriptLogPrefix}: Removing extra login screen for Office"
   & .\install_scripts\remove_extra_login_office.ps1
-  Write-Host "=== Done with removing extra login screen for Office ==="
+  Write-Host "${scriptLogPrefix}: Done removing extra login screen for Office"
 }
 

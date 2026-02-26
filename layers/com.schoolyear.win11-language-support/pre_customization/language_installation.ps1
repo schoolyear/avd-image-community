@@ -142,10 +142,10 @@ else {
     Write-Host "Language installation: Checking installed languagepack status"
     $installedLanguage = (Get-InstalledLanguage).LanguageId
     if ($installedLanguage -like $LPlanguage) {
-        Write-Host "Language $LPlanguage installed"
+        Write-Host "Language installation: Language $LPlanguage installed"
     }
     else {
-        Write-Host "Failure! Language $LPlanguage NOT installed"
+        Write-Host "Language installation: Failure! Language $LPlanguage NOT installed"
         exit 1
     }
 
