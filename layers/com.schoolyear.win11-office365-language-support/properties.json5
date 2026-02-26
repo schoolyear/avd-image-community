@@ -69,7 +69,7 @@
         "Ukrainian (Ukraine)",
         "English (Australia)"
       ],
-      default: "English (United Kingdom)"
+      default: "Dutch (Netherlands)"
     },
     removeOfficePrivacyPopup: {
       description: "Remove the 'Your Privacy Matters' Office first-run pop-up?",
