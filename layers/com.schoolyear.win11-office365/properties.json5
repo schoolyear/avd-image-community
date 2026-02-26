@@ -21,5 +21,12 @@
       "ols.officeapps.live.com:443",
       "licensing.m365.svc.cloud.microsoft:443"
     ],
+  },
+  build_parameters: {
+    removesPrivacyPopup: {
+      description: "Do you want to remove the 'Your Privacy Matters' Office first run pop-up?",
+      enum: ["yes", "no"],
+      default: "yes"
+    }
   }
 }
