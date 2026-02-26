@@ -69,62 +69,6 @@ $LanguagesDictionary = @{
 # The script was adapted to fit Schoolyear AVD and allow for parameters to change to 'any' language.           #
 #------------------------------------------------------------------------------------------------------------- #
 
-function Write-TaskbarSwitcherKeyboardLayoutsToRegistry {
-    $keyboardLayoutsKeyPath = 'HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layouts'
-    $targetKeyPath = 'HKLM:\SOFTWARE\SchoolyearAVD\LanguageSupport'
-
-    # TODO: Validate this captures the exact keyboard layouts shown in the user's taskbar language switcher in all build scenarios. Also, check how to implement functionality.
-    $languageList = Get-WinUserLanguageList -ErrorAction Stop
-    if ($null -eq $languageList -or $languageList.Count -eq 0) {
-        Write-Warning "Language installation: No user language list found when capturing taskbar switcher keyboard layouts"
-        return
-    }
-
-    $switcherEntries = New-Object System.Collections.Generic.List[string]
-
-    foreach ($language in $languageList) {
-        $languageTag = $language.LanguageTag
-        $inputMethodTips = @($language.InputMethodTips)
-
-        if ($inputMethodTips.Count -eq 0) {
-            $switcherEntries.Add(('{0} | (no InputMethodTips)' -f $languageTag))
-            continue
-        }
-
-        foreach ($tip in $inputMethodTips) {
-            $keyboardName = $null
-
-            if ($tip -match '^[0-9A-Fa-f]{4}:(?<KeyboardLayoutId>[0-9A-Fa-f]{8})$') {
-                $keyboardLayoutId = $Matches['KeyboardLayoutId']
-                $layoutRegistryPath = Join-Path $keyboardLayoutsKeyPath $keyboardLayoutId
-
-                try {
-                    $layoutItem = Get-ItemProperty -Path $layoutRegistryPath -ErrorAction Stop
-                    $keyboardName = $layoutItem.'Layout Text'
-                }
-                catch {
-                    $keyboardName = $null
-                }
-            }
-
-            if ([string]::IsNullOrWhiteSpace($keyboardName)) {
-                $switcherEntries.Add(('{0} | {1}' -f $languageTag, $tip))
-            }
-            else {
-                $switcherEntries.Add(('{0} | {1} | {2}' -f $languageTag, $tip, $keyboardName))
-            }
-        }
-    }
-
-    $uniqueEntries = $switcherEntries | Sort-Object -Unique
-
-    New-Item -Path $targetKeyPath -Force | Out-Null
-    New-ItemProperty -Path $targetKeyPath -Name 'TaskbarSwitcherKeyboardLayouts' -PropertyType MultiString -Value $uniqueEntries -Force | Out-Null
-    New-ItemProperty -Path $targetKeyPath -Name 'TaskbarSwitcherKeyboardLayoutsCount' -PropertyType DWord -Value @($uniqueEntries).Count -Force | Out-Null
-
-    Write-Host "Language installation: Wrote $(@($uniqueEntries).Count) taskbar switcher keyboard layout entries to $targetKeyPath"
-}
-
 #Set variables (change to your needs):
 Write-Host "Language installation: setting variables"
 
@@ -228,7 +172,6 @@ if (-not $keepCurrentLanguage) {
 # Copy User International Settings from current user to System, including Welcome screen and new user
 Write-Host "Language installation: Copy UserInternationalSettingsToSystem"
 Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
-Write-TaskbarSwitcherKeyboardLayoutsToRegistry
 # A restart is performed after all normal layers. So this script does not require one.
 
 # Exit 0
