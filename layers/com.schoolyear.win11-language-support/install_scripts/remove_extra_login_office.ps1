@@ -1,25 +1,36 @@
 # As adapted from: https://call4cloud.nl/continue-to-sign-in-prompt-sso-dma/
 # and https://call4cloud.nl/fix-continue-to-sign-in-prompt-dma-sso-compliance/
+# tool used : https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip
 
-$downloadUrl = "https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip"
 $tempPath = "C:\Temp"
 $viveToolDir = "$tempPath\ViVeTool"
+$viveToolResourceDir = Join-Path (Split-Path $PSScriptRoot -Parent) "resources\ViVeTool-v0.3.4-IntelAmd"
 New-Item -Path $viveToolDir -ItemType Directory -Force | Out-Null
 
 $featureIds = @(47557358, 45833058)
 
-Invoke-WebRequest -Uri $downloadUrl -OutFile "$viveToolDir\ViVeTool.zip"
-Expand-Archive -Path "$viveToolDir\ViVeTool.zip" -DestinationPath $viveToolDir -Force
-Write-Host "Downloaded and extracted ViVeTool."
+if (-not (Test-Path -LiteralPath $viveToolResourceDir)) {
+    throw "ViVeTool resource directory not found: $viveToolResourceDir"
+}
+
+$resourceViveToolExe = Get-ChildItem -Path $viveToolResourceDir -Filter "ViveTool.exe" -Recurse -File | Select-Object -First 1 -ExpandProperty FullName
+if (-not $resourceViveToolExe) {
+    throw "ViveTool.exe not found in resource directory: $viveToolResourceDir"
+}
+
+$viveToolExe = Join-Path $viveToolDir "ViveTool.exe"
+Copy-Item -LiteralPath $resourceViveToolExe -Destination $viveToolExe -Force
+
+Write-Host "Using local ViVeTool resource: $resourceViveToolExe"
 
 # disable features
 foreach ($featureId in $featureIds) {
     Write-Host "Disabling feature with ID $featureId."
-    & "$viveToolDir\ViveTool.exe" /disable /id:$featureId
+    & $viveToolExe /disable /id:$featureId
 }
  
 # Query status of features
 foreach ($featureId in $featureIds) {  
-$queryresult = & "$viveToolDir\ViveTool.exe" /query /id:$featureId  
+$queryresult = & $viveToolExe /query /id:$featureId  
 Write-Host $queryresult  
 }
