@@ -2,7 +2,7 @@
 # and https://call4cloud.nl/fix-continue-to-sign-in-prompt-dma-sso-compliance/
 # tool used : https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip
 
-$scriptLogPrefix = "Remove extra login office"
+$scriptLogPrefix = "Remove extra Office login"
 $viveToolResourceDir = Join-Path (Split-Path $PSScriptRoot -Parent) "resources\ViVeTool-v0.3.4-IntelAmd"
 
 $featureIds = @(47557358, 45833058)
@@ -19,13 +19,13 @@ if (-not $resourceViveToolExe) {
 $viveToolExe = $resourceViveToolExe
 Write-Host "${scriptLogPrefix}: Using ViVeTool directly from resources: $viveToolExe"
 
-# disable features
+# Disable features
 foreach ($featureId in $featureIds) {
     Write-Host "${scriptLogPrefix}: Disabling feature with ID $featureId"
     & $viveToolExe /disable /id:$featureId
 }
  
-# Query status of features
+# Query feature status
 foreach ($featureId in $featureIds) {
     $queryresult = & $viveToolExe /query /id:$featureId
     @($queryresult) | ForEach-Object { Write-Host "${scriptLogPrefix}: $_" }

@@ -69,19 +69,19 @@ $LanguagesDictionary = @{
 # The script was adapted to fit Schoolyear AVD and allow for parameters to change to 'any' language.           #
 #------------------------------------------------------------------------------------------------------------- #
 
-#Set variables (change to your needs):
-Write-Host "Language installation: setting variables"
+# Set variables (change to your needs):
+Write-Host "Language installation: Setting variables"
 
 $LPlanguage = $LanguagesDictionary[$windowsLanguage].Culture
 Write-Host "Language installation: Language tag is $LPlanguage "
 
 $geoId = $LanguagesDictionary[$windowsLanguage].GeoId
-Write-Host "Language installation: Geo id is $geoId "
+Write-Host "Language installation: GeoId is $geoId "
 
 # Install an additional language pack including FODs after a delay to allow earlier updates to settle.
 Write-Host "Language installation: Starting 10-minute wait before installing language pack"
 Start-Sleep -Seconds 660
-Write-Host "Language installation: Installing languagepack"
+Write-Host "Language installation: Installing language pack"
 
 $transientRetryCount = 8
 $maxAttempts = 1 + $transientRetryCount
@@ -125,8 +125,8 @@ if (-not $installed) {
 }
 
 
-#Check status of the installed language pack
-Write-Host "Language installation: Checking installed languagepack status"
+# Check status of the installed language pack
+Write-Host "Language installation: Checking installed language pack status"
 $installedLanguage = (Get-InstalledLanguage).LanguageId
 $codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
 Write-Host "Language installation: Get-InstalledLanguage LASTEXITCODE=$codeText"
@@ -140,14 +140,14 @@ else {
     exit 1
 }
 
-#Set System Preferred UI Language
+# Set System Preferred UI Language
 Write-Host "Language installation: Setting SystemPreferredUILanguage $LPlanguage"
 Set-SystemPreferredUILanguage $LPlanguage
 $codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
 Write-Host "Language installation: Set-SystemPreferredUILanguage LASTEXITCODE=$codeText"
 
 # Configure new language defaults under current user (system) after which it can be copied to system
-#Set Win UI Language Override for regional changes
+# Set Win UI Language Override for regional changes
 Write-Host "Language installation: Setting WinUILanguageOverride $LPlanguage"
 Set-WinUILanguageOverride -Language $LPlanguage
 $codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
