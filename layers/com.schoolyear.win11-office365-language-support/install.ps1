@@ -19,6 +19,8 @@ Set-StrictMode -Version Latest
 $ProgressPreference = 'SilentlyContinue'
 $scriptLogPrefix = "Office 365 language support install"
 
+Write-Host "${scriptLogPrefix}: Parameters => officeAppsLanguage='$officeAppsLanguage', removeOfficePrivacyPopup='$removeOfficePrivacyPopup'"
+
 Write-Host "${scriptLogPrefix}: Change configuration file"
 & .\install_scripts\change_office_configuration_file.ps1 -officeAppsLanguage $officeAppsLanguage
 Write-Host "${scriptLogPrefix}: Done changing configuration file"
@@ -31,4 +33,7 @@ if ($removeOfficePrivacyPopup -eq "yes") {
   Write-Host "${scriptLogPrefix}: Remove 'Your Privacy Matters' pop-up"
   & .\install_scripts\remove_privacy_pop_up.ps1
   Write-Host "${scriptLogPrefix}: Done removing 'Your Privacy Matters' pop-up"
+}
+else {
+  Write-Host "${scriptLogPrefix}: Skipping privacy pop-up removal because removeOfficePrivacyPopup='$removeOfficePrivacyPopup'"
 }
