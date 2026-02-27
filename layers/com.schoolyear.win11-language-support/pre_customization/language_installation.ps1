@@ -72,107 +72,106 @@ $LanguagesDictionary = @{
 #Set variables (change to your needs):
 Write-Host "Language installation: setting variables"
 
-$keepCurrentLanguage = $windowsLanguage -eq "Keep current language (no change)"
+$LPlanguage = $LanguagesDictionary[$windowsLanguage].Culture
+Write-Host "Language installation: Language tag is $LPlanguage "
 
-if ($keepCurrentLanguage) {
-    Write-Host "Language installation: Keeping current language settings"
-    $currentLanguageList = Get-WinUserLanguageList
-    if ($null -eq $currentLanguageList -or $currentLanguageList.Count -eq 0) {
-        throw "No existing user language list found while keep-current mode was requested."
+$geoId = $LanguagesDictionary[$windowsLanguage].GeoId
+Write-Host "Language installation: Geo id is $geoId "
+
+# Install an additional language pack including FODs after a delay to allow earlier updates to settle.
+Write-Host "Language installation: Starting 10-minute wait before installing language pack"
+Start-Sleep -Seconds 660
+Write-Host "Language installation: Installing languagepack"
+
+$transientRetryCount = 8
+$maxAttempts = 1 + $transientRetryCount
+$delaySeconds = 90
+$installed = $false
+
+for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+    try {
+        Write-Host "Language installation: Install-Language attempt $attempt/$maxAttempts for $LPlanguage"
+        Install-Language $LPlanguage -CopyToSettings -ErrorAction Stop
+        $codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
+        Write-Host "Language installation: Install-Language LASTEXITCODE=$codeText"
+        $installed = $true
+        Write-Host "Language installation: Install-Language succeeded on attempt $attempt"
+        break
     }
+    catch {
+        $hresultText = "n/a"
+        if ($null -ne $_.Exception -and $null -ne $_.Exception.HResult) {
+            $hresultText = ('0x{0:X8}' -f ($_.Exception.HResult -band 0xffffffff))
+        }
 
-    $LPlanguage = $currentLanguageList[0].LanguageTag
-    $geoId = (Get-WinHomeLocation).GeoId
-    Write-Host "Language installation: current input locale is $LPlanguage"
-    Write-Host "Language installation: current Geo id is $geoId "
+        Write-Warning "Language installation: Install-Language failed on attempt $attempt/$maxAttempts. HResult=$hresultText Message=$($_.Exception.Message)"
+
+        if ($attempt -lt $maxAttempts) {
+            $nextAttempt = $attempt + 1
+            $transientRetryIndex = $nextAttempt - 1
+            Write-Host "Language installation: Retry $transientRetryIndex/$transientRetryCount"
+
+            Write-Host "Language installation: Waiting $delaySeconds seconds before retry"
+            Start-Sleep -Seconds $delaySeconds
+        }
+        else {
+            throw
+        }
+    }
+}
+
+if (-not $installed) {
+    throw "Language installation: Install-Language failed after $maxAttempts attempts for $LPlanguage"
+}
+
+
+#Check status of the installed language pack
+Write-Host "Language installation: Checking installed languagepack status"
+$installedLanguage = (Get-InstalledLanguage).LanguageId
+$codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
+Write-Host "Language installation: Get-InstalledLanguage LASTEXITCODE=$codeText"
+if ($installedLanguage -like $LPlanguage) {
+    Write-Host "Language installation: Language $LPlanguage installed"
 }
 else {
-    $LPlanguage = $LanguagesDictionary[$windowsLanguage].Culture
-    Write-Host "Language installation: Language tag is $LPlanguage "
-
-    $geoId = $LanguagesDictionary[$windowsLanguage].GeoId
-    Write-Host "Language installation: Geo id is $geoId "
-
-    # Install an additional language pack including FODs after a delay to allow earlier updates to settle.
-    Write-Host "Language installation: Starting 10-minute wait before installing language pack"
-    Start-Sleep -Seconds 660
-    Write-Host "Language installation: Installing languagepack"
-
-    $transientRetryCount = 8
-    $maxAttempts = 1 + $transientRetryCount
-    $delaySeconds = 90
-    $installed = $false
-
-    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-        try {
-            Write-Host "Language installation: Install-Language attempt $attempt/$maxAttempts for $LPlanguage"
-            Install-Language $LPlanguage -CopyToSettings -ErrorAction Stop
-            $installed = $true
-            Write-Host "Language installation: Install-Language succeeded on attempt $attempt"
-            break
-        }
-        catch {
-            $hresultText = "n/a"
-            if ($null -ne $_.Exception -and $null -ne $_.Exception.HResult) {
-                $hresultText = ('0x{0:X8}' -f ($_.Exception.HResult -band 0xffffffff))
-            }
-
-            Write-Warning "Language installation: Install-Language failed on attempt $attempt/$maxAttempts. HResult=$hresultText Message=$($_.Exception.Message)"
-
-            if ($attempt -lt $maxAttempts) {
-                $nextAttempt = $attempt + 1
-                $transientRetryIndex = $nextAttempt - 1
-                Write-Host "Language installation: Retry $transientRetryIndex/$transientRetryCount"
-
-                Write-Host "Language installation: Waiting $delaySeconds seconds before retry"
-                Start-Sleep -Seconds $delaySeconds
-            }
-            else {
-                throw
-            }
-        }
-    }
-
-    if (-not $installed) {
-        throw "Language installation: Install-Language failed after $maxAttempts attempts for $LPlanguage"
-    }
-
-
-    #Check status of the installed language pack
-    Write-Host "Language installation: Checking installed languagepack status"
-    $installedLanguage = (Get-InstalledLanguage).LanguageId
-    if ($installedLanguage -like $LPlanguage) {
-        Write-Host "Language installation: Language $LPlanguage installed"
-    }
-    else {
-        Write-Host "Language installation: Failure! Language $LPlanguage NOT installed"
-        exit 1
-    }
-
-    #Set System Preferred UI Language
-    Write-Host "Language installation: Setting SystemPreferredUILanguage $LPlanguage"
-    Set-SystemPreferredUILanguage $LPlanguage
-
-    # Configure new language defaults under current user (system) after which it can be copied to system
-    #Set Win UI Language Override for regional changes
-    Write-Host "Language installation: Setting WinUILanguageOverride $LPlanguage"
-    Set-WinUILanguageOverride -Language $LPlanguage
+    Write-Host "Language installation: Failure! Language $LPlanguage NOT installed"
+    $codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
+    Write-Host "Language installation: Language install verification failed LASTEXITCODE=$codeText"
+    exit 1
 }
 
-if (-not $keepCurrentLanguage) {
-    # Set Culture, sets the user culture for the current user account.
-    Write-Host "Language installation: Setting culture $LPlanguage"
-    Set-Culture -CultureInfo $LPlanguage
+#Set System Preferred UI Language
+Write-Host "Language installation: Setting SystemPreferredUILanguage $LPlanguage"
+Set-SystemPreferredUILanguage $LPlanguage
+$codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
+Write-Host "Language installation: Set-SystemPreferredUILanguage LASTEXITCODE=$codeText"
 
-    # Set Win Home Location, sets the home location setting for the current user
-    Write-Host "Language installation: Setting WinHomeLocation $geoId"
-    Set-WinHomeLocation -GeoId $geoId
-}
+# Configure new language defaults under current user (system) after which it can be copied to system
+#Set Win UI Language Override for regional changes
+Write-Host "Language installation: Setting WinUILanguageOverride $LPlanguage"
+Set-WinUILanguageOverride -Language $LPlanguage
+$codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
+Write-Host "Language installation: Set-WinUILanguageOverride LASTEXITCODE=$codeText"
+
+
+
+# Set Culture, sets the user culture for the current user account.
+Write-Host "Language installation: Setting culture $LPlanguage"
+Set-Culture -CultureInfo $LPlanguage
+$codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
+Write-Host "Language installation: Set-Culture LASTEXITCODE=$codeText"
+
+# Set Win Home Location, sets the home location setting for the current user
+Write-Host "Language installation: Setting WinHomeLocation $geoId"
+Set-WinHomeLocation -GeoId $geoId
+$codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
+Write-Host "Language installation: Set-WinHomeLocation LASTEXITCODE=$codeText"
+
 
 # Copy User International Settings from current user to System, including Welcome screen and new user
 Write-Host "Language installation: Copy UserInternationalSettingsToSystem"
 Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
+$codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEXITCODE" }
+Write-Host "Language installation: Copy-UserInternationalSettingsToSystem LASTEXITCODE=$codeText"
 # A restart is performed after all normal layers. So this script does not require one.
-
-# Exit 0
 

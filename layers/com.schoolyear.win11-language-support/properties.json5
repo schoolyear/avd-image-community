@@ -2,7 +2,7 @@
 {
   version: "v2.1",
   name: "com.schoolyear.win11-language-support",
-  description: "Add language support for your base image. Installs the selected language pack and sets the default language.",
+  description: "Add language support for Windows. Installs the selected language pack and sets the default language.",
   author: {
     name: "Schoolyear",
     email: "avd@schoolyear.com"
@@ -10,7 +10,7 @@
   platform_version: "2",
   build_parameters: {
     windowsDisplayLanguage: {
-      description: "Set the Windows display language",
+      description: "Set the Windows display language to:",
       enum: [
         "Arabic (Saudi Arabia)",
         "Bulgarian (Bulgaria)",
@@ -49,15 +49,13 @@
         "Thai (Thailand)",
         "Turkish (Turkey)",
         "Ukrainian (Ukraine)",
-        "English (Australia)",
-        "Keep current language (no change)"
+        "English (Australia)"
       ],
-      default: "Keep current language (no change)"
+      default: "Dutch (Netherlands)"
     },
     removeExtraOfficeLoginPrompt: {
       description: "Remove the extra Office login prompt? (Digital Market Acts interrupts SSO)",
-      enum: ["yes", "no"],
-      default: "yes"
+      enum: ["yes", "no"]
     }
   },
   customizers: {

@@ -73,8 +73,7 @@
     },
     removeOfficePrivacyPopup: {
       description: "Remove the 'Your Privacy Matters' Office first-run pop-up?",
-      enum: ["yes", "no"],
-      default: "yes"
+      enum: ["yes", "no"]
     }
      }
 }
