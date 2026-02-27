@@ -3,10 +3,7 @@
 # tool used : https://github.com/thebookisclosed/ViVe/releases/download/v0.3.4/ViVeTool-v0.3.4-IntelAmd.zip
 
 $scriptLogPrefix = "Remove extra login office"
-$tempPath = "C:\Temp"
-$viveToolDir = "$tempPath\ViVeTool"
 $viveToolResourceDir = Join-Path (Split-Path $PSScriptRoot -Parent) "resources\ViVeTool-v0.3.4-IntelAmd"
-New-Item -Path $viveToolDir -ItemType Directory -Force | Out-Null
 
 $featureIds = @(47557358, 45833058)
 
@@ -19,10 +16,8 @@ if (-not $resourceViveToolExe) {
     throw "ViveTool.exe not found in resource directory: $viveToolResourceDir"
 }
 
-$viveToolExe = Join-Path $viveToolDir "ViveTool.exe"
-Copy-Item -LiteralPath $resourceViveToolExe -Destination $viveToolExe -Force
-
-Write-Host "${scriptLogPrefix}: Using local ViVeTool resource: $resourceViveToolExe"
+$viveToolExe = $resourceViveToolExe
+Write-Host "${scriptLogPrefix}: Using ViVeTool directly from resources: $viveToolExe"
 
 # disable features
 foreach ($featureId in $featureIds) {
