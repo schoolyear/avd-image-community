@@ -19,7 +19,8 @@ Write-Host "[removesPrivacyPopup] Creating scheduled task: $TaskPath$TaskName"
 $Command = 'reg.exe add "HKCU\Software\Microsoft\Office\16.0\Common" /v PrivacyDialogsDisabled /t REG_DWORD /d 1 /f'
 $Action    = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c $Command"
 $Trigger   = New-ScheduledTaskTrigger -AtLogOn
-$Principal = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Users" -RunLevel Limited
+$builtinUsersSid = "S-1-5-32-545"
+$Principal = New-ScheduledTaskPrincipal -GroupId $builtinUsersSid -RunLevel Limited
 $Settings  = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew
 
 Register-ScheduledTask `
