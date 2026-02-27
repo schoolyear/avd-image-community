@@ -11,7 +11,7 @@
     type: "PlatformImage",
     publisher: "MicrosoftWindowsDesktop",
     version: "latest",
-    sku: "win11-25h2-avd-m365",
+    sku: "win11-24h2-avd-m365",
     offer: "office-365"
   },
   network: {
