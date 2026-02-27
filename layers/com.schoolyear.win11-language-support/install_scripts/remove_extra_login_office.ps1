@@ -1,5 +1,5 @@
-# This script optionally removes the extra sign-in for Office apps when changing to a European language.
-# The Digital Market Act interrupts SSO for Office, if the request is coming from a European device.
+# This script optionally removes the extra sign-in for Office apps which occurs when changing to a European language.
+# The Digital Market Act interrupts SSO for Office after this, since the request is coming from a European device.
 # This script works around this interrupt.
 # As adapted from: https://call4cloud.nl/continue-to-sign-in-prompt-sso-dma/
 # and https://call4cloud.nl/fix-continue-to-sign-in-prompt-dma-sso-compliance/
