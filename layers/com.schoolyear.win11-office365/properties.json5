@@ -30,6 +30,7 @@
     officeAppsLanguage: {
       description: "Set the Microsoft 365 apps language",
       enum: [
+        "Keep current language (en-US)",
         "Arabic (Saudi Arabia)",
         "Bulgarian (Bulgaria)",
         "Chinese (Simplified, China)",
@@ -69,7 +70,7 @@
         "Ukrainian (Ukraine)",
         "English (Australia)"
       ],
-      default: "Dutch (Netherlands)"
+      default: "Keep current language (en-US)"
     },
     removeOfficePrivacyPopup: {
       description: "Remove the 'Your Privacy Matters' Office first-run pop-up?",
