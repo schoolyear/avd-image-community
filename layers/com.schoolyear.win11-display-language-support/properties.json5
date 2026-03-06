@@ -50,8 +50,7 @@
         "Turkish (Turkey)",
         "Ukrainian (Ukraine)",
         "English (Australia)"
-      ],
-      default: "Dutch (Netherlands)"
+      ]
     },
     removeExtraOfficeLoginPrompt: {
       description: "Remove the extra Office login prompt? (Digital Market Acts interrupts SSO)",
