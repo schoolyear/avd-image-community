@@ -6,9 +6,4 @@ Office. By doing this, it avoids a complete Office installation. The layer addit
 The layer only allows a small portion of the FQDNs used by Office, such that the online features such as file sync are not available.
 Office activation is allowed to be performed over the network.
 
- Many thanks to Maarten Poell from Zuyd Hogeschool for his contributions.
-
-
-
-
-
+Many thanks to Maarten Poell from Zuyd Hogeschool for his contributions.

@@ -5,7 +5,10 @@ Param (
 
   [Parameter()]
   [ValidateSet("yes", "no")]
-  [string]$removeOfficePrivacyPopup
+  [string]$removeOfficePrivacyPopup,
+
+  [Parameter(ValueFromRemainingArguments)]
+  [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
 )
 
 # Recommended snippet to make sure PowerShell stops execution on failure
