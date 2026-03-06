@@ -19,8 +19,6 @@ Set-StrictMode -Version Latest
 $ProgressPreference = 'SilentlyContinue'
 $scriptLogPrefix = "Office 365 language support install"
 
-Write-Host "${scriptLogPrefix}: Parameters => officeAppsLanguage='$officeAppsLanguage', removeOfficePrivacyPopup='$removeOfficePrivacyPopup'"
-
 if ($officeAppsLanguage -eq "Keep current language (en-US)") {
   Write-Host "${scriptLogPrefix}: Skipping Office language reconfiguration because officeAppsLanguage='$officeAppsLanguage'"
 }
