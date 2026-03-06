@@ -1,12 +1,14 @@
 Param (
-    # Controls whether the "Your Privacy Matters pop-up is removed"
-    [Parameter()]
-    [ValidateSet("yes", "no")]
-    [string]$removesPrivacyPopup,
+  [Parameter(Mandatory)]
+  [ValidateSet("Keep current language (en-US)", "Arabic (Saudi Arabia)", "Bulgarian (Bulgaria)", "Chinese (Simplified, China)", "Chinese (Traditional, Taiwan)", "Croatian (Croatia)", "Czech (Czech Republic)", "Danish (Denmark)", "Dutch (Netherlands)", "English (United Kingdom)", "Estonian (Estonia)", "Finnish (Finland)", "French (Canada)", "French (France)", "German (Germany)", "Greek (Greece)", "Hebrew (Israel)", "Hungarian (Hungary)", "Italian (Italy)", "Japanese (Japan)", "Korean (Korea)", "Latvian (Latvia)", "Lithuanian (Lithuania)", "Norwegian, Bokmål (Norway)", "Polish (Poland)", "Portuguese (Brazil)", "Portuguese (Portugal)", "Romanian (Romania)", "Russian (Russia)", "Serbian (Latin, Serbia)", "Slovak (Slovakia)", "Slovenian (Slovenia)", "Spanish (Mexico)", "Spanish (Spain)", "Swedish (Sweden)", "Thai (Thailand)", "Turkish (Turkey)", "Ukrainian (Ukraine)", "English (Australia)")]
+  [string]$officeAppsLanguage,
 
-    # You can configure your own parameter in the properties.json5 file
-    [Parameter(ValueFromRemainingArguments)]
-    [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
+  [Parameter()]
+  [ValidateSet("yes", "no")]
+  [string]$removeOfficePrivacyPopup,
+
+  [Parameter(ValueFromRemainingArguments)]
+  [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
 )
 
 # Recommended snippet to make sure PowerShell stops execution on failure
@@ -18,36 +20,26 @@ Set-StrictMode -Version Latest
 # Recommended snippet to make sure PowerShell doesn't show a progress bar when downloading files
 # This makes the downloads considerably faster
 $ProgressPreference = 'SilentlyContinue'
+$scriptLogPrefix = "Office 365 language support install"
 
-# The script creates a scheduled task that runs at *user logon* (i.e., in the user's context)
-# and sets: HKCU\Software\Microsoft\Office\16.0\Common\PrivacyDialogsDisabled=1
+if ($officeAppsLanguage -eq "Keep current language (en-US)") {
+  Write-Host "${scriptLogPrefix}: Skipping Office language reconfiguration because officeAppsLanguage='$officeAppsLanguage'"
+}
+else {
+  Write-Host "${scriptLogPrefix}: Change configuration file"
+  & .\install_scripts\change_office_configuration_file.ps1 -officeAppsLanguage $officeAppsLanguage
+  Write-Host "${scriptLogPrefix}: Done changing configuration file"
 
-#Skips this script if the parameter is set to "no"
-if ($removesPrivacyPopup -eq "no") {
-  Write-Host "[removesPrivacyPopup] Skipping script because removesPrivacyPopup=no"
-  exit 0
+  Write-Host "${scriptLogPrefix}: Change office configuration"
+  & .\install_scripts\office_language.ps1
+  Write-Host "${scriptLogPrefix}: Done changing office configuration"
 }
 
-$TaskName = "SY-OfficePrivacyDialogRemoval"
-$TaskPath = "\Schoolyear\"
-
-Write-Host "[removesPrivacyPopup] Creating scheduled task: $TaskPath$TaskName"
-
-$Command = 'reg.exe add "HKCU\Software\Microsoft\Office\16.0\Common" /v PrivacyDialogsDisabled /t REG_DWORD /d 1 /f'
-$Action    = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c $Command"
-$Trigger   = New-ScheduledTaskTrigger -AtLogOn
-$Principal = New-ScheduledTaskPrincipal -GroupId "BUILTIN\Users" -RunLevel Limited
-$Settings  = New-ScheduledTaskSettingsSet -StartWhenAvailable -MultipleInstances IgnoreNew
-
-Register-ScheduledTask `
-  -TaskName $TaskName `
-  -TaskPath $TaskPath `
-  -Action $Action `
-  -Trigger $Trigger `
-  -Principal $Principal `
-  -Settings $Settings | Out-Null
-
-Write-Host "[removesPrivacyPopup] Scheduled task created."
-Write-Host "[removesPrivacyPopup] Will run at logon in the user's context."
-
-
+if ($removeOfficePrivacyPopup -eq "yes") {
+  Write-Host "${scriptLogPrefix}: Remove 'Your Privacy Matters' pop-up"
+  & .\install_scripts\remove_privacy_pop_up.ps1
+  Write-Host "${scriptLogPrefix}: Done removing 'Your Privacy Matters' pop-up"
+}
+else {
+  Write-Host "${scriptLogPrefix}: Skipping privacy pop-up removal because removeOfficePrivacyPopup='$removeOfficePrivacyPopup'"
+}
