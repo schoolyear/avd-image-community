@@ -1,7 +1,7 @@
 
 {
   version: "v2.1",
-  name: "com.schoolyear.win11-language-support",
+  name: "com.schoolyear.win11-language",
   description: "Installs the selected language pack and sets the default language.",
   author: {
     name: "Schoolyear",
