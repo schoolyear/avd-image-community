@@ -1,10 +1,10 @@
 {
-  version: 'v2',
-  name: 'com.schoolyear.win11-office365',
-  description: "Configure the base image to win11-office365 and whitelists the required URLs. No default language support.",
+  version: "v2.1",
+  name: "com.schoolyear.win11-office365",
+  description: "Office layer with language support",
   author: {
-    name: 'Schoolyear',
-    email: 'avd@schoolyear.com'
+    name: "Schoolyear",
+    email: "avd@schoolyear.com"
   },
   platform_version: "2",
   base_image: {
@@ -15,6 +15,10 @@
     offer: "office-365"
   },
   network: {
+    // HTTP(s) hosts that are whitelisted in the proxy
+    // note that the application must be configured to use the proxy or support Windows IE proxy settings
+    //
+    // list of whitelisted hostname:port combinations. Supports * wildcards
     http_proxy_whitelist: [
       "officeclient.microsoft.com:443",
       "odc*.officeapps.live.com:443",
@@ -23,8 +27,53 @@
     ],
   },
   build_parameters: {
-    removesPrivacyPopup: {
-      description: "Do you want to remove the 'Your Privacy Matters' Office first run pop-up?",
+    officeAppsLanguage: {
+      description: "Set the Microsoft 365 apps language",
+      enum: [
+        "Keep current language (en-US)",
+        "Arabic (Saudi Arabia)",
+        "Bulgarian (Bulgaria)",
+        "Chinese (Simplified, China)",
+        "Chinese (Traditional, Taiwan)",
+        "Croatian (Croatia)",
+        "Czech (Czech Republic)",
+        "Danish (Denmark)",
+        "Dutch (Netherlands)",
+        "English (United Kingdom)",
+        "Estonian (Estonia)",
+        "Finnish (Finland)",
+        "French (Canada)",
+        "French (France)",
+        "German (Germany)",
+        "Greek (Greece)",
+        "Hebrew (Israel)",
+        "Hungarian (Hungary)",
+        "Italian (Italy)",
+        "Japanese (Japan)",
+        "Korean (Korea)",
+        "Latvian (Latvia)",
+        "Lithuanian (Lithuania)",
+        "Norwegian, Bokmål (Norway)",
+        "Polish (Poland)",
+        "Portuguese (Brazil)",
+        "Portuguese (Portugal)",
+        "Romanian (Romania)",
+        "Russian (Russia)",
+        "Serbian (Latin, Serbia)",
+        "Slovak (Slovakia)",
+        "Slovenian (Slovenia)",
+        "Spanish (Mexico)",
+        "Spanish (Spain)",
+        "Swedish (Sweden)",
+        "Thai (Thailand)",
+        "Turkish (Turkey)",
+        "Ukrainian (Ukraine)",
+        "English (Australia)"
+      ],
+      default: "Keep current language (en-US)"
+    },
+    removeOfficePrivacyPopup: {
+      description: "Remove the 'Your Privacy Matters' Office first-run pop-up?",
       enum: ["yes", "no"]
     }
   }
