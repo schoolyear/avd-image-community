@@ -1,6 +1,6 @@
 {
   version: "v2.1",
-  name: "com.schoolyear.win11-office365-language-support",
+  name: "com.schoolyear.win11-office365",
   description: "Office layer with language support",
   author: {
     name: "Schoolyear",
