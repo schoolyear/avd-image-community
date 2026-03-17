@@ -83,7 +83,7 @@
     "Write-Host \"[LanguageSupport] Checking build_parameters.json\"",
     "if (!(Test-Path \"C:\\image_bundle\\build_parameters.json\")) { throw \"build_parameters.json not found\" }",
 
-    "$windowsLanguage = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language-support'.windowsDisplayLanguage.value)",
+    "$windowsLanguage = ((Get-Content \"C:\\image_bundle\\build_parameters.json\" -Raw | ConvertFrom-Json).layers.'com.schoolyear.win11-language'.windowsDisplayLanguage.value)",
     "if ([string]::IsNullOrEmpty($windowsLanguage)) { throw \"windowsLanguage cannot be empty\" }",
     "Write-Host \"[LanguageSupport] Selected language: $windowsLanguage\"",
 
