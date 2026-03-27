@@ -1,0 +1,35 @@
+{
+  version: "v2.1",
+  name: "nl.tue.python",
+  description: "Example description: short note on what this layer does",
+  author: {
+    name: "Dirk van Nunen",
+    email: "d.j.v.nunen@tue.nl"
+  },
+  platform_version: "2",
+  network: {
+    // HTTP(s) hosts that are whitelisted in the proxy
+    // note that the application must be configured to use the proxy or support Windows IE proxy settings
+    //
+    // list of whitelisted hostname:port combinations. Supports * wildcards
+    http_proxy_whitelist: [
+      // 'example.com:443', // (port 443 is HTTPS)
+      // '*.example.com:*', // (allow any port)
+	  // "files.pythonhosted.org:443",
+      // "pythonhosted.org:443",
+      // "pypi.python.org:443",
+      // "pypi.org:443",
+    ],
+  },
+  build_parameters: {
+    exampleParameter: {
+      description: "This parameter is included as an example. You can remove it, if you remove it from the install.ps1 file as well",
+      // the enum & default fields are optional
+      enum: [
+        "Value 1",
+        "Value 2",
+      ],
+      default: "Value 1"
+    },
+  }
+}
