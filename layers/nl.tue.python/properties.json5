@@ -1,7 +1,7 @@
 {
   version: "v2.1",
   name: "nl.tue.python",
-  description: "Example description: short note on what this layer does",
+  description: "Installs Python, Visual Studio Code, Python file associations, and a baseline Python/VS Code user configuration.",
   author: {
     name: "Dirk van Nunen",
     email: "d.j.v.nunen@tue.nl"
@@ -21,15 +21,5 @@
       // "pypi.org:443",
     ],
   },
-  build_parameters: {
-    exampleParameter: {
-      description: "This parameter is included as an example. You can remove it, if you remove it from the install.ps1 file as well",
-      // the enum & default fields are optional
-      enum: [
-        "Value 1",
-        "Value 2",
-      ],
-      default: "Value 1"
-    },
-  }
+  build_parameters: {}
 }
