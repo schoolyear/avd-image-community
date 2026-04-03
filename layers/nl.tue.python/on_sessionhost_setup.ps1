@@ -5,4 +5,10 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 #The line below disables the "Windows firewall has blockes some features of this app" pop-up as it pops up when running code the first time, because VSCode tries to access the internet.
-Set-NetFirewallProfile -Profile Domain,Private,Public -NotifyOnListen False
+New-NetFirewallRule `
+  -Name "nl.tue.python.vscode.block-inbound" `
+  -DisplayName "TUE Python layer - Block inbound Visual Studio Code" `
+  -Direction Inbound `
+  -Action Block `
+  -Program "C:\VSCode\Code.exe" `
+  -Profile Any | Out-Null
