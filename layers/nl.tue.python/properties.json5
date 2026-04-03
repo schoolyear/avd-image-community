@@ -21,5 +21,14 @@
       // "pypi.org:443",
     ],
   },
-  build_parameters: {}
+  build_parameters: {
+    pythonVersion: {
+      description: "Select the Python version to install",
+      default: "3.13.3"
+    },
+    vsCodeVersion: {
+      description: "Select the Visual Studio Code version to install",
+      default: "1.114.0"
+    }
+  }
 }

@@ -1,9 +1,14 @@
+Param (
+  [Parameter(Mandatory = $true)]
+  [string]$pythonVersion
+)
+
 $scriptName = Split-Path -Path $PSCommandPath -Leaf
 
 Write-Host "Start Script, Python installation"
 
-$pythonInstallerName = "python-3.13.3-amd64.exe"
-$pythonInstallerURL = "https://www.python.org/ftp/python/3.13.3/python-3.13.3-amd64.exe"
+$pythonInstallerName = "python-$pythonVersion-amd64.exe"
+$pythonInstallerURL = "https://www.python.org/ftp/python/$pythonVersion/$pythonInstallerName"
 $pythonInstallerDownloadPath = "C:\${pythonInstallerName}"
 
 #Downloads Python
