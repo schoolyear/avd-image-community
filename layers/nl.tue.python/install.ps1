@@ -19,6 +19,7 @@ Set-StrictMode -Version Latest
 # Recommended snippet to make sure PowerShell doesn't show a progress bar when downloading files
 # This makes the downloads considerably faster
 $ProgressPreference = 'SilentlyContinue'
+$scriptLogPrefix = "Python"
 
 ## EXAMPLE: WHITELIST IP
 ## NOTE: Due to limitations in Azure, only TCP and UDP are supported
@@ -35,22 +36,22 @@ $ProgressPreference = 'SilentlyContinue'
 # New-NetFirewallDynamicKeywordAddress -Id "{any-unique-guid}" -Keyword "example.com" -AutoResolve $true
 # New-NetFirewallRule -DisplayName "Allow All Outbound to example.com" -Direction Outbound -Action Allow -RemoteDynamicKeywordAddresses (Get-NetFirewallDynamicKeywordAddress -Keyword "example.com").ID
 
-Write-Host "=== Install Python ==="
+Write-Host "${scriptLogPrefix}: Installing Python"
 & .\install_scripts\python_installation.ps1 -pythonVersion $pythonVersion
-Write-Host "=== Done with Python installation ==="
+Write-Host "${scriptLogPrefix}: Done installing Python"
 
-Write-Host "=== Install Python packages==="
+Write-Host "${scriptLogPrefix}: Installing Python packages"
 & .\install_scripts\python_post_installation.ps1
-Write-Host "=== Done with Python packages installation ==="
+Write-Host "${scriptLogPrefix}: Done installing Python packages"
 
-Write-Host "=== Install VSCode ==="
+Write-Host "${scriptLogPrefix}: Installing VSCode"
 & .\install_scripts\vscode_installation.ps1 -vsCodeVersion $vsCodeVersion -RemoveInstaller
-Write-Host "=== Done with VSCode installation ==="
+Write-Host "${scriptLogPrefix}: Done installing VSCode"
 
-Write-Host "=== Install VSCode extensions ==="
+Write-Host "${scriptLogPrefix}: Installing VSCode extensions"
 & .\install_scripts\install_extensions_vscode.ps1
-Write-Host "=== Done with VSCode extensions installation ==="
+Write-Host "${scriptLogPrefix}: Done installing VSCode extensions"
 
-Write-Host "=== Install file associoations and Python icon==="
+Write-Host "${scriptLogPrefix}: Installing file associations and Python icon"
 & .\install_scripts\file_associations_and_python_icon.ps1
-Write-Host "=== Done with file associoations and Python icon installation ==="
+Write-Host "${scriptLogPrefix}: Done installing file associations and Python icon"

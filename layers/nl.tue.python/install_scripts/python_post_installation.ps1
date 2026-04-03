@@ -1,6 +1,7 @@
 $pipExecutable = "C:\Program Files\Python313\Scripts\pip.exe"
+$scriptLogPrefix = "Python post-installation"
 
-Write-Host "Installing packages one by one"
+Write-Host "${scriptLogPrefix}: Installing packages one by one"
 
 $packages = @(
 #  "pandas",
@@ -14,16 +15,16 @@ $packages = @(
 )
 
 foreach ($package in $packages) {
-  Write-Host "Installing package: $package"
+  Write-Host "${scriptLogPrefix}: Installing package $package"
 
   $process = Start-Process -FilePath $pipExecutable -ArgumentList "install", $package -Wait -NoNewWindow -PassThru
-  Write-Host "Process exit code: $($process.ExitCode)"
+  Write-Host "${scriptLogPrefix}: Process exit code: $($process.ExitCode)"
 
   if ($process.ExitCode -ne 0) {
     throw "Failed to install package: $package. Exit code: $($process.ExitCode)"
   }
 
-  Write-Host "Successfully installed $package"
+  Write-Host "${scriptLogPrefix}: Successfully installed $package"
 }
 
-Write-Host "Done installing packages"
+Write-Host "${scriptLogPrefix}: Done installing packages"

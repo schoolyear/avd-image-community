@@ -6,6 +6,7 @@ param (
 )
 
 $scriptName = Split-Path -Path $PSCommandPath -Leaf
+$scriptLogPrefix = "VSCode"
 
 $vsCodeZipURL = "https://update.code.visualstudio.com/$vsCodeVersion/win32-x64-archive/stable"
 $vsCodeZipName = "VSCode-$vsCodeVersion-win32-x64-archive.zip"
@@ -14,7 +15,7 @@ $vsCodeZipExtractPath = "C:\VSCode"
 $vsCodeSettingsPath = "C:\Users\Default\AppData\Roaming\Code"
 
 #Downloads installer
-Write-Host "Downloading VSCode installer from $vsCodeZipURL to $vsCodeZipDownloadPath"
+Write-Host "${scriptLogPrefix}: Downloading VSCode installer from $vsCodeZipURL to $vsCodeZipDownloadPath"
 Invoke-WebRequest -Uri $vsCodeZipURL -OutFile $vsCodeZipDownloadPath
 
 if (!(Test-Path $vsCodeZipDownloadPath)) {
@@ -23,34 +24,34 @@ if (!(Test-Path $vsCodeZipDownloadPath)) {
 
 # If extracted vscode exists, remove
 if (Test-Path $vsCodeZipExtractPath) {
-  Write-Host "Found $vsCodeZipExtractPath, removing..."
+  Write-Host "${scriptLogPrefix}: Found $vsCodeZipExtractPath, removing..."
   Remove-Item $vsCodeZipExtractPath -Force -Recurse | Out-Null
-  Write-Host "Removed $vsCodeZipExtractPath"
+  Write-Host "${scriptLogPrefix}: Removed $vsCodeZipExtractPath"
 }
 
 #This extracts VS Code installation files
-Write-Host "Extracting VSCode from $vsCodeZipDownloadPath to $vsCodeZipExtractPath"
+Write-Host "${scriptLogPrefix}: Extracting VSCode from $vsCodeZipDownloadPath to $vsCodeZipExtractPath"
 Expand-Archive $vsCodeZipDownloadPath $vsCodeZipExtractPath | Out-Null
 
 if (!(Test-Path "$vsCodeZipExtractPath\Code.exe")) {
   throw "VSCode executable was not found at $vsCodeZipExtractPath\Code.exe after extraction"
 }
 
-Write-Host "Extracted VSCode"
+Write-Host "${scriptLogPrefix}: Extracted VSCode"
 
 # This configures VS Code, a.o. it disables recommendation pop-ups, it trusts external files automatically, a theme is set-up, and the welcome walkthrough is disabled
-Write-Host "Copying over data folder to $vsCodeSettingsPath..."
+Write-Host "${scriptLogPrefix}: Copying over data folder to $vsCodeSettingsPath"
 Copy-Item ".\files\vscode\User" $vsCodeSettingsPath -Force -Recurse | Out-Null
 
 if (!(Test-Path "$vsCodeSettingsPath\User\settings.json")) {
   throw "VSCode user settings were not found at $vsCodeSettingsPath\User\settings.json after copying"
 }
 
-Write-Host "Successfully copied over data folder"
+Write-Host "${scriptLogPrefix}: Successfully copied over data folder"
 
 #This removes the installer
 if ($RemoveInstaller) {
-  Write-Host "Removing downloaded installer (.zip file)"
+  Write-Host "${scriptLogPrefix}: Removing downloaded installer"
   Remove-Item $vsCodeZipDownloadPath | Out-Null
-  Write-Host "Successfully removed $vsCodeZipDownloadPath"
+  Write-Host "${scriptLogPrefix}: Successfully removed $vsCodeZipDownloadPath"
 }
