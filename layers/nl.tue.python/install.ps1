@@ -41,7 +41,7 @@ Write-Host "${scriptLogPrefix}: Installing Python"
 Write-Host "${scriptLogPrefix}: Done installing Python"
 
 Write-Host "${scriptLogPrefix}: Installing Python packages"
-& .\install_scripts\python_post_installation.ps1
+& .\install_scripts\python_post_installation.ps1 -pythonVersion $pythonVersion
 Write-Host "${scriptLogPrefix}: Done installing Python packages"
 
 Write-Host "${scriptLogPrefix}: Installing VSCode"
@@ -53,5 +53,5 @@ Write-Host "${scriptLogPrefix}: Installing VSCode extensions"
 Write-Host "${scriptLogPrefix}: Done installing VSCode extensions"
 
 Write-Host "${scriptLogPrefix}: Installing file associations and Python icon"
-& .\install_scripts\file_associations_and_python_icon.ps1
+& .\install_scripts\file_associations_and_python_icon.ps1 -pythonVersion $pythonVersion
 Write-Host "${scriptLogPrefix}: Done installing file associations and Python icon"

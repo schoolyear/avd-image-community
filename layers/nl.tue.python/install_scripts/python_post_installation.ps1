@@ -1,5 +1,16 @@
-$pipExecutable = "C:\Program Files\Python313\Scripts\pip.exe"
+Param (
+  [Parameter(Mandatory = $true)]
+  [string]$pythonVersion
+)
+
+$pythonInstallDirectoryName = "Python$($pythonVersion.Split('.')[0])$($pythonVersion.Split('.')[1])"
+$pythonInstallDirectory = Join-Path -Path $env:ProgramFiles -ChildPath $pythonInstallDirectoryName
+$pipExecutable = Join-Path -Path $pythonInstallDirectory -ChildPath "Scripts\pip.exe"
 $scriptLogPrefix = "Python post-installation"
+
+if (!(Test-Path $pipExecutable)) {
+  throw "pip executable was not found at $pipExecutable"
+}
 
 Write-Host "${scriptLogPrefix}: Installing packages one by one"
 
