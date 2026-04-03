@@ -6,10 +6,11 @@ $registryKey = "registry::HKEY_CLASSES_ROOT"
 $vsCodeExecutable = "C:\VSCode\Code.exe"
 
 # Copy over the python.ico
-try {
-  Copy-Item $pythonIconOriginalPath $pythonIconDestinationPath -Force | Out-Null
-} catch {
-  Write-Host "Failed to copy over python icon: $_"
+Write-Host "Copying Python icon from $pythonIconOriginalPath to $pythonIconDestinationPath"
+Copy-Item $pythonIconOriginalPath $pythonIconDestinationPath -Force | Out-Null
+
+if (!(Test-Path $pythonIconDestinationPath)) {
+  throw "Python icon was not found at $pythonIconDestinationPath after copying"
 }
 
 #Sets up file associations for python

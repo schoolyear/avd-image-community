@@ -15,12 +15,15 @@ $packages = @(
 
 foreach ($package in $packages) {
   Write-Host "Installing package: $package"
-  try {
-    Start-Process -FilePath $pipExecutable -ArgumentList "install", $package -Wait -NoNewWindow
-    Write-Host "Successfully installed $package"
-  } catch {
-    Write-Error "Failed to install package: $package — $_"
+
+  $process = Start-Process -FilePath $pipExecutable -ArgumentList "install", $package -Wait -NoNewWindow -PassThru
+  Write-Host "Process exit code: $($process.ExitCode)"
+
+  if ($process.ExitCode -ne 0) {
+    throw "Failed to install package: $package. Exit code: $($process.ExitCode)"
   }
+
+  Write-Host "Successfully installed $package"
 }
 
 Write-Host "Done installing packages"
