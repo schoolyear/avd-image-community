@@ -84,7 +84,11 @@ Set-Content -Path $pipIniPath -Value $pipIniContent
 Write-Host "${scriptLogPrefix}: Wrote $pipIniPath"
 
 #This part of the script add a folder to the path variable, this ensures additional installed packages can be used using a path variable
-$folderToAdd = "$env:USERPROFILE\AppData\Roaming\Python\Python313\Scripts"
+$pythonUserBase = (& python -c "import site; print(site.USER_BASE)").Trim()
+if ($LASTEXITCODE -ne 0) {
+    throw "Failed to determine the Python user base directory"
+}
+$folderToAdd = Join-Path -Path $pythonUserBase -ChildPath "Scripts"
 # Get the current user PATH environment variable
 $currentPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
 # Check if the folder is already in the PATH
