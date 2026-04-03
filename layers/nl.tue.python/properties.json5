@@ -23,8 +23,8 @@
   build_parameters: {
     pythonVersion: {
       description: "Select the Python version to install",
-      enum: ["3.13.3"],
-      default: "3.13.3"
+      enum: ["3.14.3"],
+      default: "3.14.3"
     },
     vsCodeVersion: {
       description: "Select the Visual Studio Code version to install",
