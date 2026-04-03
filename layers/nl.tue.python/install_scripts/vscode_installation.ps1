@@ -8,10 +8,34 @@ param (
 $scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "VSCode"
 
+function New-Shortcut {
+  param (
+    [Parameter(Mandatory = $true)]
+    [string]$shortcutPath,
+
+    [Parameter(Mandatory = $true)]
+    [string]$targetPath
+  )
+
+  $shortcutDirectory = Split-Path -Path $shortcutPath -Parent
+  if (!(Test-Path $shortcutDirectory)) {
+    New-Item -Path $shortcutDirectory -ItemType Directory -Force | Out-Null
+  }
+
+  $wScriptShell = New-Object -ComObject WScript.Shell
+  $shortcut = $wScriptShell.CreateShortcut($shortcutPath)
+  $shortcut.TargetPath = $targetPath
+  $shortcut.WorkingDirectory = Split-Path -Path $targetPath -Parent
+  $shortcut.IconLocation = "$targetPath, 0"
+  $shortcut.Save()
+}
+
 $vsCodeZipURL = "https://update.code.visualstudio.com/$vsCodeVersion/win32-x64-archive/stable"
 $vsCodeZipName = "VSCode-$vsCodeVersion-win32-x64-archive.zip"
 $vsCodeZipDownloadPath = "C:\${vsCodeZipName}"
 $vsCodeZipExtractPath = "C:\VSCode"
+$defaultDesktopPath = "C:\Users\Default\Desktop"
+$defaultStartMenuProgramsPath = "C:\Users\Default\AppData\Roaming\Microsoft\Windows\Start Menu\Programs"
 $vsCodeSettingsPath = "C:\Users\Default\AppData\Roaming\Code"
 
 #Downloads installer
@@ -48,6 +72,12 @@ if (!(Test-Path "$vsCodeSettingsPath\User\settings.json")) {
 }
 
 Write-Host "${scriptLogPrefix}: Successfully copied over data folder"
+
+Write-Host "${scriptLogPrefix}: Creating Default user shortcuts"
+New-Shortcut -shortcutPath (Join-Path $defaultDesktopPath "Visual Studio Code.lnk") -targetPath "$vsCodeZipExtractPath\Code.exe"
+New-Shortcut -shortcutPath (Join-Path $defaultStartMenuProgramsPath "Visual Studio Code.lnk") -targetPath "$vsCodeZipExtractPath\Code.exe"
+New-Shortcut -shortcutPath (Join-Path $defaultDesktopPath "File Explorer.lnk") -targetPath "C:\Windows\explorer.exe"
+Write-Host "${scriptLogPrefix}: Done creating Default user shortcuts"
 
 #This removes the installer
 if ($RemoveInstaller) {
