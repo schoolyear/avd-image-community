@@ -4,8 +4,9 @@ Param (
 )
 
 $scriptName = Split-Path -Path $PSCommandPath -Leaf
+$scriptLogPrefix = "Python"
 
-Write-Host "Start Script, Python installation"
+Write-Host "${scriptLogPrefix}: Starting $scriptName"
 
 $pythonInstallerName = "python-$pythonVersion-amd64.exe"
 $pythonInstallerURL = "https://www.python.org/ftp/python/$pythonVersion/$pythonInstallerName"
@@ -13,7 +14,7 @@ $pythonInstallerDownloadPath = "C:\${pythonInstallerName}"
 
 #Downloads Python
 
-Write-Host "Downloading Python Installer from $pythonInstallerURL to $pythonInstallerDownloadPath"
+Write-Host "${scriptLogPrefix}: Downloading Python installer from $pythonInstallerURL to $pythonInstallerDownloadPath"
 Invoke-WebRequest -Uri $pythonInstallerURL -OutFile $pythonInstallerDownloadPath
 
 if (!(Test-Path $pythonInstallerDownloadPath)) {
@@ -21,11 +22,11 @@ if (!(Test-Path $pythonInstallerDownloadPath)) {
 }
 
 # Installs Python
-Write-Host "Installing python..."
+Write-Host "${scriptLogPrefix}: Installing Python"
 $process = Start-Process -FilePath $pythonInstallerDownloadPath -Args "/quiet InstallAllUsers=1 AssociateFiles=1 PrependPath=1" -Wait -NoNewWindow -PassThru
-Write-Host "Process exit code: $($process.ExitCode)"
+Write-Host "${scriptLogPrefix}: Process exit code: $($process.ExitCode)"
 if ($process.ExitCode -ne 0) {
   throw "Python installation failed with exit code: $($process.ExitCode)"
 }
 
-Write-Host "Successfully installed python"
+Write-Host "${scriptLogPrefix}: Successfully installed Python"

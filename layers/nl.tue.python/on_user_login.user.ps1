@@ -24,6 +24,7 @@ Param (
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
+$scriptLogPrefix = "Python login:"
 
 # Create VSCode shortcuts on Desktop and in Start menu
 $targetPath = "C:\VSCode\code.exe"
@@ -91,13 +92,13 @@ if (!$found) {
   Write-Error "Could not find proxyVmIpAddr in metadata"
   exit 1
 }
-Write-Host "Found proxyIpAddr: $proxyIpAddr"
+Write-Host "${scriptLogPrefix}: Found proxyIpAddr: $proxyIpAddr"
 # Find user home directory and create a subfoler named 'pip'
 # inside the `pip` subfolder we create the `pip.ini` file
 $userHomeDir = [System.Environment]::GetFolderPath('UserProfile')
 $pipDir = Join-Path -Path $userHomeDir -ChildPath "pip"
 if (!(Test-Path $pipDir)) {
-  Write-Host "Creating $pipDir"
+  Write-Host "${scriptLogPrefix}: Creating $pipDir"
   New-Item -Path $pipDir -ItemType Directory -Force | Out-Null
 }
 # and fill it with our trusted hosts
@@ -110,9 +111,9 @@ trusted-host =  pypi.python.org
                 files.pythonhosted.org
 proxy = http://$proxyIpAddr
 "@
-Write-Host "Writing pip.ini file at: $pipIniPath"
+Write-Host "${scriptLogPrefix}: Writing pip.ini file at $pipIniPath"
 Set-Content -Path $pipIniPath -Value $pipIniContent
-Write-Host "Wrote $pipIniPath"
+Write-Host "${scriptLogPrefix}: Wrote $pipIniPath"
 
 #This part of the script add a folder to the path variable, this ensures additional installed packages can be used using a path variable
 $folderToAdd = "$env:USERPROFILE\AppData\Roaming\Python\Python313\Scripts"

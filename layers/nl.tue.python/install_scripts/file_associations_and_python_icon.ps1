@@ -1,4 +1,5 @@
 $scriptName = Split-Path -Path $PSCommandPath -Leaf
+$scriptLogPrefix = "Python file association"
 
 $pythonIconOriginalPath = ".\files\python.ico"
 $pythonIconDestinationPath = "C:\Program Files\Python313\python.ico"
@@ -6,7 +7,7 @@ $registryKey = "registry::HKEY_CLASSES_ROOT"
 $vsCodeExecutable = "C:\VSCode\Code.exe"
 
 # Copy over the python.ico
-Write-Host "Copying Python icon from $pythonIconOriginalPath to $pythonIconDestinationPath"
+Write-Host "${scriptLogPrefix}: Copying Python icon from $pythonIconOriginalPath to $pythonIconDestinationPath"
 Copy-Item $pythonIconOriginalPath $pythonIconDestinationPath -Force | Out-Null
 
 if (!(Test-Path $pythonIconDestinationPath)) {
@@ -14,7 +15,7 @@ if (!(Test-Path $pythonIconDestinationPath)) {
 }
 
 #Sets up file associations for python
-Write-Host "Setting up file associations for python..."
+Write-Host "${scriptLogPrefix}: Setting up file associations for Python"
 New-Item -Path "$registryKey\.py" -Force | Out-Null
 New-Item -Path "$registryKey\.python" -Force | Out-Null
 New-Item -Path "$registryKey\.pyc" -Force | Out-Null
@@ -39,4 +40,4 @@ New-Item -Path "$registryKey\Python.File\shell\open\command" -Force | Out-Null
 New-ItemProperty -Path "$registryKey\Python.File\shell\open\command" -Name "(Default)" -Value "$vsCodeExecutable `"%1`"" -PropertyType String -Force | Out-Null
 New-Item -Path "$registryKey\Python.File\DefaultIcon" -Force | Out-Null
 New-ItemProperty -Path "$registryKey\Python.File\DefaultIcon" -Name "(Default)" -Value "$pythonIconDestinationPath,0" -PropertyType String -Force | Out-Null
-Write-Host "Done setting up file associations for python"
+Write-Host "${scriptLogPrefix}: Done setting up file associations for Python"

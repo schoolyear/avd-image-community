@@ -1,4 +1,5 @@
-﻿$scriptName = Split-Path -Path $PSCommandPath -Leaf
+$scriptName = Split-Path -Path $PSCommandPath -Leaf
+$scriptLogPrefix = "VSCode extension"
 
 $extensions = @(
   "ms-python.python",
@@ -21,12 +22,12 @@ function Install-VSCodeExtension {
     )
 
     for ($i = 0; $i -lt $Retries; $i++) {
-        Write-Host "Attempting to install extension: $Extension (try $($i + 1)/$Retries)"
+        Write-Host "${scriptLogPrefix}: Attempting to install extension: $Extension (try $($i + 1)/$Retries)"
         $process = Start-Process -FilePath $codeCommandLinePath -ArgumentList "--install-extension", $Extension -Wait -NoNewWindow -PassThru
-        Write-Host "Process exit code: $($process.ExitCode)"
+        Write-Host "${scriptLogPrefix}: Process exit code: $($process.ExitCode)"
 
         if ($process.ExitCode -eq 0) {
-            Write-Host "Successfully installed: $Extension"
+            Write-Host "${scriptLogPrefix}: Successfully installed $Extension"
             return
         }
 
@@ -34,7 +35,7 @@ function Install-VSCodeExtension {
             throw "Failed to install $Extension after $Retries attempts. Last exit code: $($process.ExitCode)"
         }
 
-        Write-Host "Retrying $Extension after exit code $($process.ExitCode)"
+        Write-Host "${scriptLogPrefix}: Retrying $Extension after exit code $($process.ExitCode)"
         Start-Sleep -Seconds 5
     }
 }
@@ -48,7 +49,7 @@ foreach ($extension in $extensions) {
 }
 
 #Installing extensions creates some necesarry files in the User profile, since the System user installs these, the files need to be copied to the student user
-Write-Host "Copying VSCode extensions to C:\users\Default\.vscode\extensions"
+Write-Host "${scriptLogPrefix}: Copying VSCode extensions to C:\users\Default\.vscode\extensions"
 Copy-Item -Path "C:\Windows\System32\config\systemprofile\.vscode\extensions" -Destination "C:\users\Default\.vscode\extensions" -Recurse -Force
 
 if (!(Test-Path "C:\users\Default\.vscode\extensions")) {
