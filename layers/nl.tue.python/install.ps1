@@ -49,6 +49,3 @@ Write-Host "=== Install file associoations and Python icon==="
 & .\install_scripts\file_associations_and_python_icon.ps1
 Write-Host "=== Done with file associoations and Python icon installation ==="
 
-Write-Host "=== Install pinToTaskbar tool ==="
-& .\install_scripts\install_tool_pinToTaskbar.ps1
-Write-Host "=== Done with pinToTaskbar tool installation ==="
