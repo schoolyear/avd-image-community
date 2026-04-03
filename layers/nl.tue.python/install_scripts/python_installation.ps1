@@ -12,23 +12,20 @@ $pythonInstallerURL = "https://www.python.org/ftp/python/$pythonVersion/$pythonI
 $pythonInstallerDownloadPath = "C:\${pythonInstallerName}"
 
 #Downloads Python
-if (!(Test-Path $pythonInstallerDownloadPath)) {
-  Write-Host "Python Installer not found, downloading..."
-  $output = Invoke-WebRequest -Uri $pythonInstallerURL -OutFile $pythonInstallerDownloadPath 2>&1
-  Write-Host $output
-}
 
+Write-Host "Downloading Python Installer from $pythonInstallerURL to $pythonInstallerDownloadPath"
+Invoke-WebRequest -Uri $pythonInstallerURL -OutFile $pythonInstallerDownloadPath
+
+if (!(Test-Path $pythonInstallerDownloadPath)) {
+  throw "Python installer was not found at $pythonInstallerDownloadPath after download"
+}
 
 # Installs Python
-try {
-  Write-Host "Installing python..."
-  $process = Start-Process -FilePath $pythonInstallerDownloadPath -Args "/quiet InstallAllUsers=1 AssociateFiles=1 PrependPath=1" -Wait -NoNewWindow -PassThru
-  Write-Host "Process exit code: $($process.ExitCode)"
-  if ($process.ExitCode -eq 0) {
-    Write-Host "Successfully installed python"
-  } else {
-    Write-Host "Python installation failed with exit code: $($process.ExitCode)"
-  }
-} catch {
-  Write-Host "Failed to install python: $_"
+Write-Host "Installing python..."
+$process = Start-Process -FilePath $pythonInstallerDownloadPath -Args "/quiet InstallAllUsers=1 AssociateFiles=1 PrependPath=1" -Wait -NoNewWindow -PassThru
+Write-Host "Process exit code: $($process.ExitCode)"
+if ($process.ExitCode -ne 0) {
+  throw "Python installation failed with exit code: $($process.ExitCode)"
 }
+
+Write-Host "Successfully installed python"

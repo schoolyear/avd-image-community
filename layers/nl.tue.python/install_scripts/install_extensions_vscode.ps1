@@ -21,34 +21,36 @@ function Install-VSCodeExtension {
     )
 
     for ($i = 0; $i -lt $Retries; $i++) {
-        try {
-            Write-Host "Attempting to install extension: $Extension (try $($i + 1)/$Retries)"
-            Start-Process -FilePath $codeCommandLinePath -ArgumentList "--install-extension", $Extension -Wait -NoNewWindow -ErrorAction Stop
+        Write-Host "Attempting to install extension: $Extension (try $($i + 1)/$Retries)"
+        $process = Start-Process -FilePath $codeCommandLinePath -ArgumentList "--install-extension", $Extension -Wait -NoNewWindow -PassThru
+        Write-Host "Process exit code: $($process.ExitCode)"
+
+        if ($process.ExitCode -eq 0) {
             Write-Host "Successfully installed: $Extension"
             return
-        } catch {
-            if ($i -eq $Retries - 1) {
-                Write-Host "Failed to install $Extension after $Retries attempts: $_"
-            } else {
-                Write-Host "Retrying $Extension due to error: $_"
-                Start-Sleep -Seconds 5
-            }
         }
+
+        if ($i -eq $Retries - 1) {
+            throw "Failed to install $Extension after $Retries attempts. Last exit code: $($process.ExitCode)"
+        }
+
+        Write-Host "Retrying $Extension after exit code $($process.ExitCode)"
+        Start-Sleep -Seconds 5
     }
 }
 
-try {
-    foreach ($extension in $extensions) {
-        Install-VSCodeExtension -Extension $extension
-    }
-} catch {
-    Write-Host "General failure during extension installation process: $_"
+if (!(Test-Path $codeCommandLinePath)) {
+    throw "VSCode command line executable was not found at $codeCommandLinePath"
+}
+
+foreach ($extension in $extensions) {
+    Install-VSCodeExtension -Extension $extension
 }
 
 #Installing extensions creates some necesarry files in the User profile, since the System user installs these, the files need to be copied to the student user
-Try {
-    Copy-Item -Path "C:\Windows\System32\config\systemprofile\.vscode\extensions" -Destination "C:\users\Default\.vscode\extensions" -Recurse -Force
-    }
-    Catch {
-        Write-Host "Failed to copy extensions to Default user due to error: $_"
-    }
+Write-Host "Copying VSCode extensions to C:\users\Default\.vscode\extensions"
+Copy-Item -Path "C:\Windows\System32\config\systemprofile\.vscode\extensions" -Destination "C:\users\Default\.vscode\extensions" -Recurse -Force
+
+if (!(Test-Path "C:\users\Default\.vscode\extensions")) {
+    throw "VSCode extensions were not found at C:\users\Default\.vscode\extensions after copying"
+}
