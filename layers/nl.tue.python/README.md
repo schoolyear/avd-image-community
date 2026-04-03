@@ -1,5 +1,5 @@
 # Python and Visual Studio Code
 
-This layer installs Python, Visual Studio Code, and a small set of Python and Jupyter Notebook extensions for VS Code, including `ipykernel` and the VS Code Jupyter extension set.
+This layer installs Python, Visual Studio Code, and a small set of Python and Jupyter Notebook extensions for VS Code, including the VS Code Jupyter extension set.
 
-It also configures Python file associations, adds a Python icon, creates VS Code and File Explorer shortcuts for new users, and prepares `pip` to use the session host proxy during user login.
+Optionally, the layer prepares `pip` to use the session host proxy so students can install Python packages during the exam. If allowed, make sure the proxy whitelist in `properties.json5` allows the required Python package hosts.

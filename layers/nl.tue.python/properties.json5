@@ -13,9 +13,8 @@
     //
     // list of whitelisted hostname:port combinations. Supports * wildcards
     http_proxy_whitelist: [
-      // 'example.com:443', // (port 443 is HTTPS)
-      // '*.example.com:*', // (allow any port)
-	  // "files.pythonhosted.org:443",
+      // Uncomment these lines if you want to allow students to use pip to install packages during the exam.
+	    // "files.pythonhosted.org:443",
       // "pythonhosted.org:443",
       // "pypi.python.org:443",
       // "pypi.org:443",
