@@ -1,11 +1,14 @@
 param (
+  [Parameter(Mandatory = $true)]
+  [string]$vsCodeVersion,
+
   [switch]$RemoveInstaller
 )
 
 $scriptName = Split-Path -Path $PSCommandPath -Leaf
 
-$vsCodeZipURL = "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-archive"
-$vsCodeZipName = "vscode.zip"
+$vsCodeZipURL = "https://update.code.visualstudio.com/$vsCodeVersion/win32-x64-archive/stable"
+$vsCodeZipName = "VSCode-$vsCodeVersion-win32-x64-archive.zip"
 $vsCodeZipDownloadPath = "C:\${vsCodeZipName}"
 $vsCodeZipExtractPath = "C:\VSCode"
 $vsCodeSettingsPath = "C:\Users\Default\AppData\Roaming\Code"

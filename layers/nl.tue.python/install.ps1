@@ -1,5 +1,11 @@
 
 Param (
+    [Parameter(Mandatory = $true)]
+    [string]$pythonVersion,
+
+    [Parameter(Mandatory = $true)]
+    [string]$vsCodeVersion,
+
     [Parameter(ValueFromRemainingArguments)]
     [string[]]$RemainingArgs                    # To make sure this script doesn't break when new parameters are added
 )
@@ -30,7 +36,7 @@ $ProgressPreference = 'SilentlyContinue'
 # New-NetFirewallRule -DisplayName "Allow All Outbound to example.com" -Direction Outbound -Action Allow -RemoteDynamicKeywordAddresses (Get-NetFirewallDynamicKeywordAddress -Keyword "example.com").ID
 
 Write-Host "=== Install Python ==="
-& .\install_scripts\python_installation.ps1
+& .\install_scripts\python_installation.ps1 -pythonVersion $pythonVersion
 Write-Host "=== Done with Python installation ==="
 
 Write-Host "=== Install Python packages==="
@@ -38,7 +44,7 @@ Write-Host "=== Install Python packages==="
 Write-Host "=== Done with Python packages installation ==="
 
 Write-Host "=== Install VSCode ==="
-& .\install_scripts\vscode_installation.ps1 -RemoveInstaller
+& .\install_scripts\vscode_installation.ps1 -vsCodeVersion $vsCodeVersion -RemoveInstaller
 Write-Host "=== Done with VSCode installation ==="
 
 Write-Host "=== Install VSCode extensions ==="
@@ -48,4 +54,3 @@ Write-Host "=== Done with VSCode extensions installation ==="
 Write-Host "=== Install file associoations and Python icon==="
 & .\install_scripts\file_associations_and_python_icon.ps1
 Write-Host "=== Done with file associoations and Python icon installation ==="
-
