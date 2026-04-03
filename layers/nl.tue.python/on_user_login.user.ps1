@@ -24,39 +24,7 @@ Param (
 
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
-$scriptLogPrefix = "Python login:"
-
-# Create VSCode shortcuts on Desktop and in Start menu
-$targetPath = "C:\VSCode\code.exe"
-$desktopPath = [Environment]::GetFolderPath("Desktop")
-$shortcutName = "Visual Studio Code.lnk"
-$shortcutPath = Join-Path $desktopPath $shortcutName
-$startMenuPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\$shortcutName"
-# Create shortcut on Desktop
-$WScriptShell = New-Object -ComObject WScript.Shell
-$desktopShortcut = $WScriptShell.CreateShortcut($shortcutPath)
-$desktopShortcut.TargetPath = $targetPath
-$desktopShortcut.WorkingDirectory = Split-Path $targetPath
-$desktopShortcut.IconLocation = "$targetPath, 0"
-$desktopShortcut.Save()
-# Copy shortcut to Start menu
-Copy-Item -Path $shortcutPath -Destination $startMenuPath -Force
-
-# Create Windows Explorer shortcuts on Desktop and in Start menu
-$targetPath = "C:\Windows\explorer.exe"
-$desktopPath = [Environment]::GetFolderPath("Desktop")
-$shortcutName = "File Explorer.lnk"
-$shortcutPath = Join-Path $desktopPath $shortcutName
-$startMenuPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\$shortcutName"
-# Create File Explorer shortcut on Desktop
-$WScriptShell = New-Object -ComObject WScript.Shell
-$desktopShortcut = $WScriptShell.CreateShortcut($shortcutPath)
-$desktopShortcut.TargetPath = $targetPath
-$desktopShortcut.WorkingDirectory = Split-Path $targetPath
-$desktopShortcut.IconLocation = "$targetPath, 0"
-$desktopShortcut.Save()
-# Adds shortcut to Start menu
-Copy-Item -Path $shortcutPath -Destination $startMenuPath -Force
+$scriptLogPrefix = "Python login"
 
 # The main purpose of this part of the script is to set up Python in order to use the SY Trusted Proxy.
 # Which in turn is configured to whitelist the hosts specified in our properties.json5 file.
