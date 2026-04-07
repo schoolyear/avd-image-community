@@ -6,7 +6,7 @@
 
 - [ ] The layer has a single application or one clear purpose.
 - [ ] All values that may change over time are exposed as parameters.
-- [ ] The README documents how this layers was tested and in which scenarios (for example teachers, students, summative exams, and/or scale).
+- [ ] The README documents how this layer was tested and in which scenarios (for example teachers, students, summative exams, and/or scale).
 - [ ] Critical image build steps fail the image build when they fail.
 - [ ] Code comments are included where they are needed for maintainability.
 - [ ] Author information is present in the properties file.
