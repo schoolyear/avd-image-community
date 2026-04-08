@@ -2,14 +2,14 @@ $scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "VSCode extension"
 
 $extensions = @(
-  "ms-python.python@2026.5.2026032701",
-  "ms-python.vscode-pylance@2026.2.1",
-  "ms-toolsai.jupyter@2025.10.2026040301",
-  "ms-toolsai.vscode-jupyter-cell-tags@0.1.9",
-  "ms-toolsai.jupyter-keymap@1.1.2",
-  "ms-toolsai.jupyter-renderers@1.3.2025062701",
-  "ms-toolsai.vscode-jupyter-slideshow@0.1.6",
-  "tankashing.blinds-theme@8.0.0"
+  "ms-python.python",
+  "ms-python.vscode-pylance",
+  "ms-toolsai.jupyter",
+  "ms-toolsai.vscode-jupyter-cell-tags",
+  "ms-toolsai.jupyter-keymap",
+  "ms-toolsai.jupyter-renderers",
+  "ms-toolsai.vscode-jupyter-slideshow",
+  "tankashing.blinds-theme"
 )
 
 $codeCommandLinePath = "C:\VSCode\bin\code.cmd"
