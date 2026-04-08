@@ -101,8 +101,4 @@ if ($currentPath -notmatch [regex]::Escape($folderToAdd)) {
     Write-Output "Folder is already in the user PATH."
 }
 
-#start VSCode to make sure all extensions are loaded and ready for use.
-Start-Process -FilePath C:\VSCode\Code.exe
-Start-Sleep 10
-Stop-Process -Name 'Code'
 
