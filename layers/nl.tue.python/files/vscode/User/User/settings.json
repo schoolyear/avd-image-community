@@ -6,5 +6,6 @@
   "extensions.ignoreRecommendations": true,
   "security.workspace.trust.enabled": false,
   "workbench.colorTheme": "Default Light Modern",
-  "workbench.welcomePage.walkthroughs.openOnInstall": false
+  "workbench.welcomePage.walkthroughs.openOnInstall": false,
+  "chat.disableAIFeatures": true
 }
