@@ -15,9 +15,10 @@ if (!(Test-Path $pipExecutable)) {
 Write-Host "${scriptLogPrefix}: Installing packages one by one"
 
 $packages = @(
+# Uncomment to install additional packages.
 #  "pandas",
 #  "vpython",
-  "ipykernel"
+#  "ipykernel"
 #  "numpy",
 #  "matplotlib",
 #  "requests",

@@ -4,11 +4,12 @@ $scriptLogPrefix = "VSCode extension"
 $extensions = @(
   "ms-python.python",
   "ms-python.vscode-pylance",
-  "ms-toolsai.jupyter",
-  "ms-toolsai.vscode-jupyter-cell-tags",
-  "ms-toolsai.jupyter-keymap",
-  "ms-toolsai.jupyter-renderers",
-  "ms-toolsai.vscode-jupyter-slideshow",
+  # Uncomment to install Jupyter extensions. Please note this will add time to student start-up.
+  # "ms-toolsai.jupyter",
+  # "ms-toolsai.vscode-jupyter-cell-tags",
+  # "ms-toolsai.jupyter-keymap",
+  # "ms-toolsai.jupyter-renderers",
+  # "ms-toolsai.vscode-jupyter-slideshow",
   "tankashing.blinds-theme"
 )
 
