@@ -27,11 +27,10 @@ $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
 # Add the Python user Scripts directory to the user PATH so commands from user-installed packages are available.
-$pythonUserBase = (& python -c "import site; print(site.USER_BASE)").Trim()
+$folderToAdd = (& python -c "import os, sysconfig; print(sysconfig.get_path('scripts', scheme=f'{os.name}_user'))").Trim()
 if ($LASTEXITCODE -ne 0) {
-    throw "Failed to determine the Python user base directory"
+    throw "Failed to determine the Python user Scripts directory"
 }
-$folderToAdd = Join-Path -Path $pythonUserBase -ChildPath "Scripts"
 # Get the current user PATH environment variable
 $currentPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
 # Check if the folder is already in the PATH
