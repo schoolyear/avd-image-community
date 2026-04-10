@@ -63,23 +63,27 @@ if ($vsCodeWarmed -ne 1) {
 
             Start-Process -FilePath $vsCodePath -ArgumentList "--new-window" | Out-Null
 
-            Start-Sleep -Seconds 25
-            $newCodeProcesses = @(
-                Get-Process -Name "Code" -ErrorAction SilentlyContinue |
-                Where-Object { $_.Id -notin $existingCodeProcessIds }
-            )
-
-            if ($newCodeProcesses.Count -eq 0) {
-                Start-Sleep -Seconds 20
+            $visibleCodeProcesses = @()
+            for ($i = 0; $i -lt 60 -and $visibleCodeProcesses.Count -eq 0; $i++) {
+                Start-Sleep -Seconds 1
                 $newCodeProcesses = @(
                     Get-Process -Name "Code" -ErrorAction SilentlyContinue |
                     Where-Object { $_.Id -notin $existingCodeProcessIds }
                 )
+                $visibleCodeProcesses = @(
+                    $newCodeProcesses |
+                    Where-Object { $_.MainWindowHandle -ne 0 }
+                )
             }
 
-            if ($newCodeProcesses.Count -eq 0) {
-                Write-Output "VS Code warm-up skipped because no new VS Code process appeared."
+            if ($visibleCodeProcesses.Count -eq 0) {
+                if ($newCodeProcesses.Count -gt 0) {
+                    $newCodeProcesses | Stop-Process -Force -ErrorAction SilentlyContinue
+                }
+
+                Write-Output "VS Code warm-up skipped because no visible VS Code window appeared."
             } else {
+                Start-Sleep -Seconds 5
                 $newCodeProcesses | Stop-Process -Force -ErrorAction SilentlyContinue
 
                 if (-not (Test-Path -LiteralPath $firstLoginRegistryPath)) {
