@@ -44,4 +44,60 @@ if ($currentPath -notmatch [regex]::Escape($folderToAdd)) {
     Write-Output "Folder is already in the user PATH."
 }
 
+# Warm VS Code once per user so the first interactive launch during the exam is faster.
+$vsCodePath = "C:\VSCode\Code.exe"
+$firstLoginRegistryPath = "HKCU:\Software\Schoolyear\FirstLoginActions"
+$vsCodeWarmupRegistryName = "nl.tue.python.vscodeWarmup"
+$vsCodeWarmed = (Get-ItemProperty -Path $firstLoginRegistryPath -Name $vsCodeWarmupRegistryName -ErrorAction SilentlyContinue).$vsCodeWarmupRegistryName
 
+if ($vsCodeWarmed -ne 1) {
+    if (-not (Test-Path -LiteralPath $vsCodePath)) {
+        Write-Output "VS Code warm-up skipped because $vsCodePath was not found."
+    } else {
+        try {
+            Write-Output "First login detected. Warming up VS Code."
+
+            $existingCodeProcessIds = @(
+                Get-Process -Name "Code" -ErrorAction SilentlyContinue |
+                Select-Object -ExpandProperty Id
+            )
+
+            Start-Process -FilePath $vsCodePath -ArgumentList "--new-window" | Out-Null
+
+            Start-Sleep -Seconds 10
+            $newCodeProcesses = @(
+                Get-Process -Name "Code" -ErrorAction SilentlyContinue |
+                Where-Object { $_.Id -notin $existingCodeProcessIds }
+            )
+
+            if ($newCodeProcesses.Count -eq 0) {
+                Start-Sleep -Seconds 20
+                $newCodeProcesses = @(
+                    Get-Process -Name "Code" -ErrorAction SilentlyContinue |
+                    Where-Object { $_.Id -notin $existingCodeProcessIds }
+                )
+            }
+
+            if ($newCodeProcesses.Count -eq 0) {
+                Write-Output "VS Code warm-up skipped because no new VS Code process appeared."
+            } else {
+                $newCodeProcesses | Stop-Process -Force -ErrorAction SilentlyContinue
+
+                if (-not (Test-Path -LiteralPath $firstLoginRegistryPath)) {
+                    New-Item -Path $firstLoginRegistryPath -Force | Out-Null
+                }
+
+                New-ItemProperty `
+                    -Path $firstLoginRegistryPath `
+                    -Name $vsCodeWarmupRegistryName `
+                    -Value 1 `
+                    -PropertyType DWord `
+                    -Force | Out-Null
+
+                Write-Output "VS Code warm-up completed."
+            }
+        } catch {
+            Write-Warning "VS Code warm-up failed: $($_.Exception.Message)"
+        }
+    }
+}
