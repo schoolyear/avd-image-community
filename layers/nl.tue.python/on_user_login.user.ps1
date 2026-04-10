@@ -47,7 +47,7 @@ if ($currentPath -notmatch [regex]::Escape($folderToAdd)) {
 $vsCodePath = "C:\VSCode\Code.exe"
 $firstLoginRegistryPath = "HKCU:\Software\Schoolyear\FirstLoginActions"
 $vsCodeWarmupRegistryName = "nl.tue.python.vscodeWarmup"
-$vsCodeWarmed = (Get-ItemProperty -Path $firstLoginRegistryPath -Name $vsCodeWarmupRegistryName -ErrorAction SilentlyContinue).$vsCodeWarmupRegistryName
+$vsCodeWarmed = Get-ItemPropertyValue -Path $firstLoginRegistryPath -Name $vsCodeWarmupRegistryName -ErrorAction SilentlyContinue
 
 if ($vsCodeWarmed -ne 1) {
     if (-not (Test-Path -LiteralPath $vsCodePath)) {
@@ -63,7 +63,7 @@ if ($vsCodeWarmed -ne 1) {
 
             Start-Process -FilePath $vsCodePath -ArgumentList "--new-window" | Out-Null
 
-            Start-Sleep -Seconds 10
+            Start-Sleep -Seconds 25
             $newCodeProcesses = @(
                 Get-Process -Name "Code" -ErrorAction SilentlyContinue |
                 Where-Object { $_.Id -notin $existingCodeProcessIds }
