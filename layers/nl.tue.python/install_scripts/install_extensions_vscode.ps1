@@ -14,6 +14,7 @@ $extensions = @(
 )
 
 $codeCommandLinePath = "C:\VSCode\bin\code.cmd"
+$vsCodePortableExtensionsPath = "C:\VSCode\data\extensions"
 
 #This installs some VS Code extensions, including a colour blindness theme
 function Install-VSCodeExtension {
@@ -49,10 +50,11 @@ foreach ($extension in $extensions) {
     Install-VSCodeExtension -Extension $extension
 }
 
-#Installing extensions creates some necesarry files in the User profile, since the System user installs these, the files need to be copied to the student user
-Write-Host "${scriptLogPrefix}: Copying VSCode extensions to C:\users\Default\.vscode\extensions"
-Copy-Item -Path "C:\Windows\System32\config\systemprofile\.vscode\extensions" -Destination "C:\users\Default\.vscode\extensions" -Recurse -Force
+# In portable mode, extensions are stored in C:\VSCode\data\extensions instead of a user profile.
+Write-Host "${scriptLogPrefix}: Verifying VSCode portable extensions at $vsCodePortableExtensionsPath"
 
-if (!(Test-Path "C:\users\Default\.vscode\extensions")) {
-    throw "VSCode extensions were not found at C:\users\Default\.vscode\extensions after copying"
+if (!(Test-Path $vsCodePortableExtensionsPath)) {
+    throw "VSCode extensions were not found at $vsCodePortableExtensionsPath after installation"
 }
+
+Write-Host "${scriptLogPrefix}: VSCode portable extensions are available at $vsCodePortableExtensionsPath"

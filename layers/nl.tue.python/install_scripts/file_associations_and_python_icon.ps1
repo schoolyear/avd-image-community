@@ -8,7 +8,7 @@ $scriptLogPrefix = "Python file association"
 
 $pythonInstallDirectoryName = "Python$($pythonVersion.Split('.')[0])$($pythonVersion.Split('.')[1])"
 $pythonInstallDirectory = Join-Path -Path $env:ProgramFiles -ChildPath $pythonInstallDirectoryName
-$pythonIconOriginalPath = ".\files\python.ico"
+$pythonIconOriginalPath = ".\resources\python.ico"
 $pythonIconDestinationPath = Join-Path -Path $pythonInstallDirectory -ChildPath "python.ico"
 $registryKey = "registry::HKEY_CLASSES_ROOT"
 $vsCodeExecutable = "C:\VSCode\Code.exe"

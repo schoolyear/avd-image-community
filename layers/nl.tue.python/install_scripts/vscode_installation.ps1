@@ -34,9 +34,10 @@ $vsCodeZipURL = "https://update.code.visualstudio.com/$vsCodeVersion/win32-x64-a
 $vsCodeZipName = "VSCode-$vsCodeVersion-win32-x64-archive.zip"
 $vsCodeZipDownloadPath = "C:\${vsCodeZipName}"
 $vsCodeZipExtractPath = "C:\VSCode"
+$vsCodeDataPath = Join-Path $vsCodeZipExtractPath "data"
 $defaultDesktopPath = "C:\Users\Default\Desktop"
 $defaultStartMenuProgramsPath = "C:\Users\Default\AppData\Roaming\Microsoft\Windows\Start Menu\Programs"
-$vsCodeSettingsPath = "C:\Users\Default\AppData\Roaming\Code"
+$vsCodeSettingsPath = Join-Path $vsCodeDataPath "user-data"
 
 #Downloads installer
 Write-Host "${scriptLogPrefix}: Downloading VSCode installer from $vsCodeZipURL to $vsCodeZipDownloadPath"
@@ -56,23 +57,32 @@ if (!(Test-Path "$vsCodeZipExtractPath\Code.exe")) {
 
 Write-Host "${scriptLogPrefix}: Extracted VSCode"
 
-Write-Host "${scriptLogPrefix}: Ensuring VSCode data directory exists at C:\VSCode\data"
-if (!(Test-Path "C:\VSCode\data")) {
-  New-Item -Path "C:\VSCode\data" -ItemType Directory -Force | Out-Null
-  Write-Host "${scriptLogPrefix}: Created VSCode data directory at C:\VSCode\data"
+Write-Host "${scriptLogPrefix}: Ensuring VSCode portable data directory exists at $vsCodeDataPath"
+if (!(Test-Path $vsCodeDataPath)) {
+  New-Item -Path $vsCodeDataPath -ItemType Directory -Force | Out-Null
+  Write-Host "${scriptLogPrefix}: Created VSCode portable data directory at $vsCodeDataPath"
 } else {
-  Write-Host "${scriptLogPrefix}: VSCode data directory already exists at C:\VSCode\data"
+  Write-Host "${scriptLogPrefix}: VSCode portable data directory already exists at $vsCodeDataPath"
 }
 
-# This configures VS Code, a.o. it disables recommendation pop-ups, it trusts external files automatically, a theme is set-up, and the welcome walkthrough is disabled
-Write-Host "${scriptLogPrefix}: Copying over data folder to $vsCodeSettingsPath"
-Copy-Item ".\files\vscode\User" $vsCodeSettingsPath -Force -Recurse | Out-Null
+# This configures VS Code portable mode, a.o. it disables recommendation pop-ups,
+# trusts external files automatically, sets a theme, and disables the welcome walkthrough.
+Write-Host "${scriptLogPrefix}: Ensuring VSCode portable user-data directory exists at $vsCodeSettingsPath"
+if (!(Test-Path $vsCodeSettingsPath)) {
+  New-Item -Path $vsCodeSettingsPath -ItemType Directory -Force | Out-Null
+  Write-Host "${scriptLogPrefix}: Created VSCode portable user-data directory at $vsCodeSettingsPath"
+} else {
+  Write-Host "${scriptLogPrefix}: VSCode portable user-data directory already exists at $vsCodeSettingsPath"
+}
+
+Write-Host "${scriptLogPrefix}: Copying VSCode portable user data to $vsCodeSettingsPath"
+Copy-Item ".\resources\vscode\portable-user-data\*" $vsCodeSettingsPath -Force -Recurse | Out-Null
 
 if (!(Test-Path "$vsCodeSettingsPath\User\settings.json")) {
   throw "VSCode user settings were not found at $vsCodeSettingsPath\User\settings.json after copying"
 }
 
-Write-Host "${scriptLogPrefix}: Successfully copied over data folder"
+Write-Host "${scriptLogPrefix}: Successfully copied VSCode portable user data"
 
 Write-Host "${scriptLogPrefix}: Creating Default user shortcuts"
 New-Shortcut -shortcutPath (Join-Path $defaultDesktopPath "Visual Studio Code.lnk") -targetPath "$vsCodeZipExtractPath\Code.exe"
