@@ -56,6 +56,6 @@ Write-Host "${scriptLogPrefix}: Installing VSCode extensions"
 & .\install_scripts\install_extensions_vscode.ps1
 Write-Host "${scriptLogPrefix}: Done installing VSCode extensions"
 
-Write-Host "${scriptLogPrefix}: Installing file associations and Python icon"
-& .\install_scripts\file_associations_and_python_icon.ps1 -pythonVersion $pythonVersion
-Write-Host "${scriptLogPrefix}: Done installing file associations and Python icon"
+Write-Host "${scriptLogPrefix}: Installing file associations and VSCode icon"
+& .\install_scripts\file_associations_and_vscode_icon.ps1 -pythonVersion $pythonVersion
+Write-Host "${scriptLogPrefix}: Done installing file associations and VSCode icon"
