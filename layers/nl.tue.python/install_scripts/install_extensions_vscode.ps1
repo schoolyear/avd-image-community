@@ -15,7 +15,7 @@ $extensions = @(
 $codeCommandLinePath = "C:\VSCode\bin\code.cmd"
 $vsCodePortableExtensionsPath = "C:\VSCode\data\extensions"
 
-#This installs some VS Code extensions, including a colour blindness theme
+# Install the configured VS Code extensions, including a color blindness theme.
 function Install-VSCodeExtension {
     param (
         [string]$Extension,

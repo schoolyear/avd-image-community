@@ -29,9 +29,9 @@ Write-Host "${scriptLogPrefix}: Installing Python packages"
 & .\install_scripts\python_post_installation.ps1 -pythonVersion $pythonVersion
 Write-Host "${scriptLogPrefix}: Done installing Python packages"
 
-Write-Host "${scriptLogPrefix}: Configuring pip proxy for the Default user profile"
+Write-Host "${scriptLogPrefix}: Configuring pip proxy"
 & .\install_scripts\configure_pip_proxy.ps1
-Write-Host "${scriptLogPrefix}: Done configuring pip proxy for the Default user profile"
+Write-Host "${scriptLogPrefix}: Done configuring pip proxy"
 
 Write-Host "${scriptLogPrefix}: Installing VSCode"
 & .\install_scripts\vscode_installation.ps1 -vsCodeVersion $vsCodeVersion -RemoveInstaller
