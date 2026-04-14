@@ -3,6 +3,8 @@ Param (
   [string]$pythonVersion
 )
 
+$ProgressPreference = 'SilentlyContinue'
+
 $scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "Python"
 
