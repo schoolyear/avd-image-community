@@ -8,20 +8,20 @@ $scriptLogPrefix = "Python file association"
 
 $pythonInstallDirectoryName = "Python$($pythonVersion.Split('.')[0])$($pythonVersion.Split('.')[1])"
 $pythonInstallDirectory = Join-Path -Path $env:ProgramFiles -ChildPath $pythonInstallDirectoryName
-$pythonIconOriginalPath = ".\resources\python.ico"
-$pythonIconDestinationPath = Join-Path -Path $pythonInstallDirectory -ChildPath "python.ico"
+$vsCodeIconSourcePath = ".\resources\vscode\vscode.ico"
+$vsCodeIconDestinationPath = Join-Path -Path $pythonInstallDirectory -ChildPath "vscode.ico"
 $registryKey = "registry::HKEY_CLASSES_ROOT"
 $vsCodeExecutable = "C:\VSCode\Code.exe"
 
-# Copy over the python.ico
-Write-Host "${scriptLogPrefix}: Copying Python icon from $pythonIconOriginalPath to $pythonIconDestinationPath"
-Copy-Item $pythonIconOriginalPath $pythonIconDestinationPath -Force | Out-Null
+# Copy the VS Code icon used for Python file associations.
+Write-Host "${scriptLogPrefix}: Copying VSCode icon from $vsCodeIconSourcePath to $vsCodeIconDestinationPath"
+Copy-Item $vsCodeIconSourcePath $vsCodeIconDestinationPath -Force | Out-Null
 
-if (!(Test-Path $pythonIconDestinationPath)) {
-  throw "Python icon was not found at $pythonIconDestinationPath after copying"
+if (!(Test-Path $vsCodeIconDestinationPath)) {
+  throw "VSCode icon was not found at $vsCodeIconDestinationPath after copying"
 }
 
-#Sets up file associations for python
+# Set up Python file associations that open in VS Code.
 Write-Host "${scriptLogPrefix}: Setting up file associations for Python"
 New-Item -Path "$registryKey\.py" -Force | Out-Null
 New-Item -Path "$registryKey\.python" -Force | Out-Null
@@ -46,5 +46,5 @@ New-ItemProperty -Path "$registryKey\Python.File" -Name "(Default)" -Value "Pyth
 New-Item -Path "$registryKey\Python.File\shell\open\command" -Force | Out-Null
 New-ItemProperty -Path "$registryKey\Python.File\shell\open\command" -Name "(Default)" -Value "$vsCodeExecutable `"%1`"" -PropertyType String -Force | Out-Null
 New-Item -Path "$registryKey\Python.File\DefaultIcon" -Force | Out-Null
-New-ItemProperty -Path "$registryKey\Python.File\DefaultIcon" -Name "(Default)" -Value "$pythonIconDestinationPath,0" -PropertyType String -Force | Out-Null
+New-ItemProperty -Path "$registryKey\Python.File\DefaultIcon" -Name "(Default)" -Value "$vsCodeIconDestinationPath,0" -PropertyType String -Force | Out-Null
 Write-Host "${scriptLogPrefix}: Done setting up file associations for Python"
