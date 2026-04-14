@@ -5,6 +5,8 @@ param (
   [switch]$RemoveInstaller
 )
 
+$ProgressPreference = 'SilentlyContinue'
+
 $scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "VSCode"
 
