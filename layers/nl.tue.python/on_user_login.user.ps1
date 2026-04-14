@@ -83,7 +83,7 @@ if ($vsCodeWarmed -ne 1) {
 
                 Write-Output "VS Code warm-up skipped because no visible VS Code window appeared."
             } else {
-                Start-Sleep -Seconds 5
+                Start-Sleep -Seconds 15
                 $newCodeProcesses | Stop-Process -Force -ErrorAction SilentlyContinue
 
                 if (-not (Test-Path -LiteralPath $firstLoginRegistryPath)) {
