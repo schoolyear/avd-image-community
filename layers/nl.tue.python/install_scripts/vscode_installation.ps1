@@ -7,7 +7,6 @@ param (
 
 $ProgressPreference = 'SilentlyContinue'
 
-$scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "VSCode"
 
 function New-Shortcut {
@@ -67,8 +66,7 @@ if (!(Test-Path $vsCodeDataPath)) {
   Write-Host "${scriptLogPrefix}: VSCode portable data directory already exists at $vsCodeDataPath"
 }
 
-# This configures VS Code portable mode, a.o. it disables recommendation pop-ups,
-# trusts external files automatically, sets a theme, and disables the welcome walkthrough.
+# This configures VS Code portable mode
 Write-Host "${scriptLogPrefix}: Ensuring VSCode portable user-data directory exists at $vsCodeSettingsPath"
 if (!(Test-Path $vsCodeSettingsPath)) {
   New-Item -Path $vsCodeSettingsPath -ItemType Directory -Force | Out-Null
@@ -77,6 +75,8 @@ if (!(Test-Path $vsCodeSettingsPath)) {
   Write-Host "${scriptLogPrefix}: VSCode portable user-data directory already exists at $vsCodeSettingsPath"
 }
 
+# This configures VS code settings, a.o. it disables recommendation pop-ups,
+# trusts external files automatically, sets a theme, and disables the welcome walkthrough.
 Write-Host "${scriptLogPrefix}: Copying VSCode portable user data to $vsCodeSettingsPath"
 Copy-Item ".\resources\vscode\portable-user-data\*" $vsCodeSettingsPath -Force -Recurse | Out-Null
 
@@ -86,6 +86,7 @@ if (!(Test-Path "$vsCodeSettingsPath\User\settings.json")) {
 
 Write-Host "${scriptLogPrefix}: Successfully copied VSCode portable user data"
 
+# This creates shortcuts
 Write-Host "${scriptLogPrefix}: Creating Default user shortcuts"
 New-Shortcut -shortcutPath (Join-Path $defaultDesktopPath "Visual Studio Code.lnk") -targetPath "$vsCodeZipExtractPath\Code.exe"
 New-Shortcut -shortcutPath (Join-Path $defaultStartMenuProgramsPath "Visual Studio Code.lnk") -targetPath "$vsCodeZipExtractPath\Code.exe"

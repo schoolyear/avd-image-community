@@ -1,6 +1,3 @@
-Param ()
-
-$scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "Python pip proxy"
 $defaultUserProfile = "C:\Users\Default"
 $proxyUrl = "http://proxies.local:8080"

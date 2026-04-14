@@ -3,7 +3,6 @@ Param (
   [string]$pythonVersion
 )
 
-$scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "Python file association"
 
 $pythonInstallDirectoryName = "Python$($pythonVersion.Split('.')[0])$($pythonVersion.Split('.')[1])"

@@ -5,10 +5,9 @@ Param (
 
 $ProgressPreference = 'SilentlyContinue'
 
-$scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "Python"
 
-Write-Host "${scriptLogPrefix}: Starting $scriptName"
+Write-Host "${scriptLogPrefix}: Starting Python installation"
 
 $pythonInstallerName = "python-$pythonVersion-amd64.exe"
 $pythonInstallerURL = "https://www.python.org/ftp/python/$pythonVersion/$pythonInstallerName"

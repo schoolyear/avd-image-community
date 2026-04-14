@@ -1,10 +1,9 @@
-$scriptName = Split-Path -Path $PSCommandPath -Leaf
 $scriptLogPrefix = "VSCode extension"
 
 $extensions = @(
   "ms-python.python",
   "ms-python.vscode-pylance",
-  # Uncomment to install Jupyter extensions. Please note this will add time to student start-up.
+  # Uncomment to install Jupyter extensions.
   # "ms-toolsai.jupyter",
   # "ms-toolsai.vscode-jupyter-cell-tags",
   # "ms-toolsai.jupyter-keymap",
