@@ -46,13 +46,6 @@ if (!(Test-Path $vsCodeZipDownloadPath)) {
   throw "VSCode installer was not found at $vsCodeZipDownloadPath after download"
 }
 
-# If extracted vscode exists, remove
-if (Test-Path $vsCodeZipExtractPath) {
-  Write-Host "${scriptLogPrefix}: Found $vsCodeZipExtractPath, removing..."
-  Remove-Item $vsCodeZipExtractPath -Force -Recurse | Out-Null
-  Write-Host "${scriptLogPrefix}: Removed $vsCodeZipExtractPath"
-}
-
 #This extracts VS Code installation files
 Write-Host "${scriptLogPrefix}: Extracting VSCode from $vsCodeZipDownloadPath to $vsCodeZipExtractPath"
 Expand-Archive $vsCodeZipDownloadPath $vsCodeZipExtractPath | Out-Null
@@ -62,6 +55,14 @@ if (!(Test-Path "$vsCodeZipExtractPath\Code.exe")) {
 }
 
 Write-Host "${scriptLogPrefix}: Extracted VSCode"
+
+Write-Host "${scriptLogPrefix}: Ensuring VSCode data directory exists at C:\VSCode\data"
+if (!(Test-Path "C:\VSCode\data")) {
+  New-Item -Path "C:\VSCode\data" -ItemType Directory -Force | Out-Null
+  Write-Host "${scriptLogPrefix}: Created VSCode data directory at C:\VSCode\data"
+} else {
+  Write-Host "${scriptLogPrefix}: VSCode data directory already exists at C:\VSCode\data"
+}
 
 # This configures VS Code, a.o. it disables recommendation pop-ups, it trusts external files automatically, a theme is set-up, and the welcome walkthrough is disabled
 Write-Host "${scriptLogPrefix}: Copying over data folder to $vsCodeSettingsPath"
