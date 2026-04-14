@@ -43,7 +43,9 @@ if ($currentPath -notmatch [regex]::Escape($folderToAdd)) {
     Write-Output "Folder is already in the user PATH."
 }
 
-# Warm VS Code once per user so the first interactive launch during the exam is faster.
+# Start and stop VS Code once per user so the first interactive launch during the exam is faster.
+# This adds ~25 seconds to initial start-up, but VS code will start almost instantly during the exam,
+# improving the student experience.
 $vsCodePath = "C:\VSCode\Code.exe"
 $firstLoginRegistryPath = "HKCU:\Software\Schoolyear\FirstLoginActions"
 $vsCodeWarmupRegistryName = "nl.tue.python.vscodeWarmup"
