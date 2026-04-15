@@ -31,8 +31,10 @@ $folderToAdd = (& python -c "import os, sysconfig; print(sysconfig.get_path('scr
 if ($LASTEXITCODE -ne 0) {
     throw "Failed to determine the Python user Scripts directory"
 }
+
 # Get the current user PATH environment variable
 $currentPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::User)
+
 # Check if the folder is already in the PATH
 if ($currentPath -notmatch [regex]::Escape($folderToAdd)) {
     # Add the folder to the PATH
@@ -41,68 +43,4 @@ if ($currentPath -notmatch [regex]::Escape($folderToAdd)) {
     Write-Output "Folder added to user PATH successfully."
 } else {
     Write-Output "Folder is already in the user PATH."
-}
-
-# Start and stop VS Code once per user so the first interactive launch during the exam is faster.
-# This adds ~25 seconds to initial start-up, but VS code will start almost instantly during the exam,
-# improving the student experience.
-$vsCodePath = "C:\VSCode\Code.exe"
-$firstLoginRegistryPath = "HKCU:\Software\Schoolyear\FirstLoginActions"
-$vsCodeWarmupRegistryName = "nl.tue.python.vscodeWarmup"
-$vsCodeWarmed = Get-ItemPropertyValue -Path $firstLoginRegistryPath -Name $vsCodeWarmupRegistryName -ErrorAction SilentlyContinue
-
-if ($vsCodeWarmed -ne 1) {
-    if (-not (Test-Path -LiteralPath $vsCodePath)) {
-        Write-Output "VS Code warm-up skipped because $vsCodePath was not found."
-    } else {
-        try {
-            Write-Output "First login detected. Warming up VS Code."
-
-            $existingCodeProcessIds = @(
-                Get-Process -Name "Code" -ErrorAction SilentlyContinue |
-                Select-Object -ExpandProperty Id
-            )
-
-            Start-Process -FilePath $vsCodePath -ArgumentList "--new-window" | Out-Null
-
-            $visibleCodeProcesses = @()
-            for ($i = 0; $i -lt 60 -and $visibleCodeProcesses.Count -eq 0; $i++) {
-                Start-Sleep -Seconds 1
-                $newCodeProcesses = @(
-                    Get-Process -Name "Code" -ErrorAction SilentlyContinue |
-                    Where-Object { $_.Id -notin $existingCodeProcessIds }
-                )
-                $visibleCodeProcesses = @(
-                    $newCodeProcesses |
-                    Where-Object { $_.MainWindowHandle -ne 0 }
-                )
-            }
-
-            if ($visibleCodeProcesses.Count -eq 0) {
-                if ($newCodeProcesses.Count -gt 0) {
-                    $newCodeProcesses | Stop-Process -Force -ErrorAction SilentlyContinue
-                }
-
-                Write-Output "VS Code warm-up skipped because no visible VS Code window appeared."
-            } else {
-                Start-Sleep -Seconds 20
-                $newCodeProcesses | Stop-Process -Force -ErrorAction SilentlyContinue
-
-                if (-not (Test-Path -LiteralPath $firstLoginRegistryPath)) {
-                    New-Item -Path $firstLoginRegistryPath -Force | Out-Null
-                }
-
-                New-ItemProperty `
-                    -Path $firstLoginRegistryPath `
-                    -Name $vsCodeWarmupRegistryName `
-                    -Value 1 `
-                    -PropertyType DWord `
-                    -Force | Out-Null
-
-                Write-Output "VS Code warm-up completed."
-            }
-        } catch {
-            Write-Warning "VS Code warm-up failed: $($_.Exception.Message)"
-        }
-    }
 }
