@@ -44,3 +44,7 @@ Write-Host "${scriptLogPrefix}: Done installing VSCode extensions"
 Write-Host "${scriptLogPrefix}: Installing file associations and VSCode icon"
 & .\install_scripts\file_associations_and_vscode_icon.ps1 -pythonVersion $pythonVersion
 Write-Host "${scriptLogPrefix}: Done installing file associations and VSCode icon"
+
+Write-Host "${scriptLogPrefix}: Configuring taskbar layout"
+& .\install_scripts\configure_taskbar_layout.ps1
+Write-Host "${scriptLogPrefix}: Done configuring taskbar layout"
