@@ -4,13 +4,13 @@
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
-# Block inbound traffic for VS Code to suppress the Windows Firewall prompt on first run.
 $firewallRuleName = "nl.tue.python.vscode.block-inbound"
 $scriptLogPrefix = "VSCode warm-up"
 $vsCodePath = "C:\VSCode\Code.exe"
 $warmupSeconds = 90
 $processDetectionSeconds = 0
 
+# Block inbound traffic for VS Code to suppress the Windows Firewall prompt on first run.
 if (-not (Get-NetFirewallRule -Name $firewallRuleName -ErrorAction SilentlyContinue)) {
   New-NetFirewallRule `
     -Name $firewallRuleName `
@@ -21,6 +21,7 @@ if (-not (Get-NetFirewallRule -Name $firewallRuleName -ErrorAction SilentlyConti
     -Profile Any | Out-Null
 }
 
+# Start VSCode, then stop it after a delay. This reduces the time it takes for VSCode to start on first use by students.
 if (!(Test-Path -LiteralPath $vsCodePath)) {
   Write-Warning "${scriptLogPrefix}: Skipping warm-up because $vsCodePath was not found."
   return
