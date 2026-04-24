@@ -1,0 +1,14 @@
+{
+  version: "v2.1",
+  name: "com.schoolyear.win11-experimental-start-menu-improvement",
+  description: "Improves the responsiveness of the Windows 11 start menu for students using it for the first time",
+  author: {
+    name: "Schoolyear",
+    email: "avd@schoolyear.com"
+  },
+  platform_version: "2",
+  network: {
+    http_proxy_whitelist: [ ],
+  },
+  build_parameters: {}
+}
