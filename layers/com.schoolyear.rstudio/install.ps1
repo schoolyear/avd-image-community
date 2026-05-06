@@ -21,3 +21,7 @@ Write-Host "=== Done with post installation ==="
 Write-Host "=== File association ==="
 & .\install_scripts\file_associations.ps1
 Write-Host "=== Done with file association ==="
+
+Write-Host "=== Configure taskbar layout ==="
+& .\install_scripts\configure_taskbar_layout.ps1
+Write-Host "=== Done with taskbar layout ==="
