@@ -1,5 +1,3 @@
-Param ()
-
 $ErrorActionPreference = "Stop"
 Set-StrictMode -Version Latest
 
@@ -24,6 +22,7 @@ function Add-RStudioTaskbarPin {
     [string]$DesktopApplicationLinkPath
   )
 
+  # Load the existing taskbar layout XML so we can append the RStudio pin entry.
   [xml]$layoutXml = Get-Content -LiteralPath $LayoutPath
 
   $layoutNamespaceUri = "http://schemas.microsoft.com/Start/2014/LayoutModification"
@@ -38,6 +37,7 @@ function Add-RStudioTaskbarPin {
   $pinList = $layoutXml.SelectSingleNode("//taskbar:TaskbarPinList", $namespaceManager)
 
   if ($null -eq $pinList) {
+    # Some layouts do not define a pin list yet, so create the missing XML structure first.
     $customTaskbarLayoutCollection = $layoutXml.SelectSingleNode("//layout:CustomTaskbarLayoutCollection", $namespaceManager)
     if ($null -eq $customTaskbarLayoutCollection) {
       throw "CustomTaskbarLayoutCollection was not found in $LayoutPath"
@@ -53,6 +53,7 @@ function Add-RStudioTaskbarPin {
     $taskbarLayout.AppendChild($pinList) | Out-Null
   }
 
+  # Add RStudio as a desktop app pin and save the updated layout back to disk.
   $desktopApp = $layoutXml.CreateElement("taskbar", "DesktopApp", $taskbarNamespaceUri)
   $desktopApp.SetAttribute("DesktopApplicationLinkPath", $DesktopApplicationLinkPath)
   $pinList.AppendChild($desktopApp) | Out-Null
@@ -69,6 +70,7 @@ if (!(Test-Path $startMenuProgramsPath)) {
   throw "Start Menu Programs path was not found at $startMenuProgramsPath"
 }
 
+# Place the shortcut in the all-users Start Menu so the taskbar layout can reference it.
 Write-Host "${scriptLogPrefix}: Copying RStudio shortcut to $shortcutDestinationPath"
 Copy-Item -Path $shortcutSourcePath -Destination $shortcutDestinationPath -Force | Out-Null
 
@@ -82,6 +84,7 @@ if (!(Test-Path $layoutDirectory)) {
 }
 
 if (Test-Path $layoutDestinationPath) {
+  # Reuse the existing OEM layout file and append the RStudio pin if the file is already present.
   Write-Host "${scriptLogPrefix}: Updating existing taskbar layout at $layoutDestinationPath"
   Add-RStudioTaskbarPin -LayoutPath $layoutDestinationPath -DesktopApplicationLinkPath $shortcutLayoutPath
 } else {
@@ -89,6 +92,7 @@ if (Test-Path $layoutDestinationPath) {
     throw "Taskbar layout resource was not found at $layoutSourcePath"
   }
 
+  # Copy the default taskbar layout file into the OEM folder the first time.
   Write-Host "${scriptLogPrefix}: Copying taskbar layout to $layoutDestinationPath"
   Copy-Item -Path $layoutSourcePath -Destination $layoutDestinationPath -Force | Out-Null
 }
@@ -102,6 +106,7 @@ if (!(Test-Path $explorerRegistryPath)) {
   throw "Explorer registry path was not found at $explorerRegistryPath"
 }
 
+# Point Explorer at the OEM layout file so new profiles inherit the configured taskbar pins.
 New-ItemProperty `
   -Path $explorerRegistryPath `
   -Name $layoutRegistryName `
