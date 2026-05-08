@@ -1,6 +1,6 @@
 {
   version: "v2.1",
-  name: "com.schoolyear.win11-experimental-start-menu-improvement",
+  name: "com.schoolyear.win11-start-menu-improvement",
   description: "Improves the responsiveness of the Windows 11 start menu for students using it for the first time",
   author: {
     name: "Schoolyear",

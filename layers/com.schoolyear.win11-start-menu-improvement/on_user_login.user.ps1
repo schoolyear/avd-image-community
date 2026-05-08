@@ -1,4 +1,4 @@
-# Experimental: Opens and closes the start menu once, to ensure the start menu is responsive when a student first tries to open it.
+# Opens and closes the start menu once, to ensure the start menu is responsive when a student first tries to open it.
 # Adds ~10 seconds to initial start-up.
 Param (
     [Parameter(Mandatory = $true)]
