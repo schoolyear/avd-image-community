@@ -112,7 +112,9 @@
     "  Write-Host \"[LanguageSupport] Completed: $($script.Name)\"",
     "}",
 
-    "Write-Host \"[LanguageSupport] All pre-customization scripts completed successfully\""
+    "Write-Host \"[LanguageSupport] All pre-customization scripts completed successfully\"",
+    "Write-Host \"[LanguageSupport] Last exit code check: $LASTEXITCODE \"",
+    "exit 0"
   ],
   system: true,
   elevated: true
