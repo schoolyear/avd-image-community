@@ -116,7 +116,7 @@
     "Write-Host \"[LanguageSupport] Last exit code check: $LASTEXITCODE \"",
     "exit 0"
   ],
-  valid_exit_codes: [0, 2],
+  validExitCodes: [0, 2],
   system: true,
   elevated: true
 }
