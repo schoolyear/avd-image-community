@@ -175,3 +175,6 @@ $codeText = if ($null -eq $global:LASTEXITCODE) { "n/a" } else { "$global:LASTEX
 Write-Host "Language installation: Copy-UserInternationalSettingsToSystem LASTEXITCODE=$codeText"
 # A restart is performed after all normal layers. So this script does not require one.
 
+# This customization step in the Azure Image builder sometimes causes the outer script to return exit code 2, even if the scripts complete successfully.
+# To prevent this from incorrectly failing the image build,  exit code 2 is added as a valid exit code for this step, in the properties.json.
+
