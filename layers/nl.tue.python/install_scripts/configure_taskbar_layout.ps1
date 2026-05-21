@@ -44,17 +44,17 @@ function Add-VSCodeTaskbarPin {
     $taskbarLayout = $layoutXml.SelectSingleNode("//defaultlayout:TaskbarLayout", $namespaceManager)
     if ($null -eq $taskbarLayout) {
       $taskbarLayout = $layoutXml.CreateElement("defaultlayout", "TaskbarLayout", $defaultLayoutNamespaceUri)
-      $customTaskbarLayoutCollection.AppendChild($taskbarLayout) | Out-Null
+      $customTaskbarLayoutCollection.AppendChild($taskbarLayout)
     }
 
     $pinList = $layoutXml.CreateElement("taskbar", "TaskbarPinList", $taskbarNamespaceUri)
-    $taskbarLayout.AppendChild($pinList) | Out-Null
+    $taskbarLayout.AppendChild($pinList)
   }
 
   # Add VS Code as a desktop app pin and save the updated layout back to disk.
   $desktopApp = $layoutXml.CreateElement("taskbar", "DesktopApp", $taskbarNamespaceUri)
   $desktopApp.SetAttribute("DesktopApplicationLinkPath", $DesktopApplicationLinkPath)
-  $pinList.AppendChild($desktopApp) | Out-Null
+  $pinList.AppendChild($desktopApp)
 
   $layoutXml.Save($LayoutPath)
   Write-Host "${scriptLogPrefix}: Added VS Code taskbar pin to $LayoutPath"
