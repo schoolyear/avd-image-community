@@ -1,0 +1,35 @@
+{
+  version: "v2.1",
+  name: "nl.tue.python",
+  description: "Installs Python, Visual Studio Code, Python file associations, and a baseline Python/VS Code user configuration.",
+  author: {
+    name: "Dirk van Nunen",
+    email: "d.j.v.nunen@tue.nl"
+  },
+  platform_version: "2",
+  network: {
+    // HTTP(s) hosts that are whitelisted in the proxy
+    // note that the application must be configured to use the proxy or support Windows IE proxy settings
+    //
+    // list of whitelisted hostname:port combinations. Supports * wildcards
+    http_proxy_whitelist: [
+      // Uncomment these lines if you want to allow students to use pip to install packages during the exam.
+	    // "files.pythonhosted.org:443",
+      // "pythonhosted.org:443",
+      // "pypi.python.org:443",
+      // "pypi.org:443",
+    ],
+  },
+  build_parameters: {
+    pythonVersion: {
+      description: "Select the Python version to install",
+      enum: ["3.14.3"],
+      default: "3.14.3"
+    },
+    vsCodeVersion: {
+      description: "Select the Visual Studio Code version to install",
+      enum: ["1.114.0"],
+      default: "1.114.0"
+    }
+  }
+}
