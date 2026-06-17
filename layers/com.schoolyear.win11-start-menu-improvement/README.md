@@ -1,6 +1,6 @@
-# Experimental Windows 11 start menu improvement
+# Preview: Windows 11 start menu improvement
 
-*Note: this layer is marked `Experimental`. Although this layer has been tested, the functionality relies on simulated keyboard input. Due to the nature of Windows UI behavior, future Windows updates or environment-specific differences may cause this functionality to stop working or behave inconsistently. As always, test new exam images thoroughly.*
+*Note: this layer is marked `Preview`. Although this layer has been tested, the functionality relies on simulated keyboard input. Due to the nature of Windows UI behavior, future Windows updates or environment-specific differences may cause this functionality to stop working or behave inconsistently. As always, test new exam images thoroughly.*
 
 This layer ensures the start menu is responsive when clicked for the first time by a student.
 
