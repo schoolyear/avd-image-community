@@ -6,7 +6,7 @@ When you switch to a European language, this normally introduces an extra sign-i
 
 The layer uses the properties 'pre' customization step feature to add additional installation steps before the Schoolyear base layer.
 
-Note: this layer adds 1 hour to the image building process. It also lengthens the sysprep phase to ~25 minutes.
+Note: this layer adds ~1 hour to the image building process. It also lengthens the sysprep phase to ~25 minutes. When using `avdcli bundle autobuild`, consider increasing the build timeout to, for example, 240 minutes and the builder VM size to `Standard_D4s_v4`. To do this, add `--build-timeout 240 --builder-vm-size Standard_D4s_v4` to the `avdcli bundle autobuild` command.
 
 Many thanks to Maarten Poell from Zuyd Hogeschool for his contributions.
 
