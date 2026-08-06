@@ -66,7 +66,6 @@ if (!(Test-Path $downloadFolder)) {
 ## /Create Download folder ##
 
 # Download R
-$rVersion = "4.4.1"
 $rDownloadDestination = Join-Path -Path $downloadFolder -ChildPath "R-$rVersion-win.exe"
 if (!(Test-Path $rDownloadDestination)) {
   Write-Host "R installer doesn't seem to exist, downloading..."
@@ -76,7 +75,6 @@ if (!(Test-Path $rDownloadDestination)) {
 }
 
 # Download RStudio
-$rStudioVersion = "2024.04.2-764"
 $rStudioDownloadDestination = Join-Path -Path $downloadFolder -ChildPath "RStudio-$rStudioVersion.exe"
 if (!(Test-Path $rStudioDownloadDestination)) {
   Write-Host "RStudio installer not found, downloading..."
